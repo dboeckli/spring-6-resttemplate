@@ -27,6 +27,8 @@ public class BeerClientImpl implements BeerClient {
     private static final String GET_LIST_BEER_PATH = "/api/v1/beer/listBeers";
     private static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/getBeerById/{beerId}";
     private static final String POST_CREATE_BEER_PATH = "/api/v1/beer/createBeer";
+    private static final String PUT_UPDATE_BEER_PATH = "/api/v1/beer/editBeer/{beerId}";
+    private static final String DELETE_BEER_BY_ID_PATH = "/api/v1/beer/deleteBeer/{beerId}";
 
     public Page<BeerDTO> listBeers() {
         return this.listBeers(null, null, null, null, null);
@@ -72,6 +74,19 @@ public class BeerClientImpl implements BeerClient {
 
         URI location = restTemplate.postForLocation(POST_CREATE_BEER_PATH, newBeer);
         return restTemplate.getForObject(location.getPath(), BeerDTO.class);
+    }
+
+    @Override
+    public BeerDTO updateBeer(BeerDTO beerDTO) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplate.put(PUT_UPDATE_BEER_PATH, beerDTO, beerDTO.getId());
+        return this.getBeerById(beerDTO.getId());
+    }
+
+    @Override
+    public void deleteBeer(UUID id) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        restTemplate.delete(DELETE_BEER_BY_ID_PATH, id);
     }
 
     private UriComponentsBuilder getQueryForListBeer(String beerName,

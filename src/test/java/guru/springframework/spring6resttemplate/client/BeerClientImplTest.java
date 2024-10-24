@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 // TODO: Currently this test only works when the project spring-6-rest-mvc is running listening on port 80. 
 // TODO: Therefore the test will fail in github actions. We should mock the rest template
@@ -62,7 +65,7 @@ class BeerClientImplTest {
     }
 
     @Test
-    void createBeer() {
+    void testCreateBeer() {
         BeerDTO newBeer = BeerDTO.builder()
             .beerName("Guguseli")
             .upc("abc")
@@ -74,5 +77,31 @@ class BeerClientImplTest {
         BeerDTO beerByIdDTO = beerClient.getBeerById(createdBeerDTO.getId());
 
         assertEquals(newBeer.getBeerName(), beerByIdDTO.getBeerName());
+    }
+
+    @Test
+    void testUpdateBeer() {
+        BeerDTO beerToUpdate = beerClient.listBeers().getContent().getFirst();
+        beerToUpdate.setBeerName("updated beer name");
+        
+        BeerDTO updatedBeerDTO = beerClient.updateBeer(beerToUpdate);
+
+        assertEquals(beerToUpdate.getBeerName(), updatedBeerDTO.getBeerName());
+    }
+
+    @Test
+    void testDeleteBeer() {
+        BeerDTO beerToDelete = beerClient.listBeers().getContent().getFirst();
+
+        beerClient.deleteBeer(beerToDelete.getId());
+
+        HttpClientErrorException thrown = assertThrows(HttpClientErrorException.class,
+            () -> beerClient.getBeerById(beerToDelete.getId()
+        ));
+        assertEquals(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), thrown.getStatusCode());
+
+        log.error("Exception Status: {} -  {}", thrown.getStatusCode(), thrown.getStatusText());
+        log.error("Exception - header {} ", thrown.getResponseHeaders());
+        log.error("\n Exception - message  {} ", thrown.getResponseBodyAsString());
     }
 }
