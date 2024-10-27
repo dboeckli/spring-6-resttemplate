@@ -19,6 +19,5 @@ public class RestTemplateBuilderConfig {
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
         return builder.uriTemplateHandler(uriBuilderFactory);
     }
-    
-    
+
 }

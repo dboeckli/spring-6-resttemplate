@@ -1,6 +1,5 @@
 package guru.springframework.spring6resttemplate.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
@@ -14,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -24,11 +22,11 @@ public class BeerClientImpl implements BeerClient {
 
     private final RestTemplateBuilder restTemplateBuilder;
 
-    private static final String GET_LIST_BEER_PATH = "/api/v1/beer/listBeers";
-    private static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/getBeerById/{beerId}";
-    private static final String POST_CREATE_BEER_PATH = "/api/v1/beer/createBeer";
-    private static final String PUT_UPDATE_BEER_PATH = "/api/v1/beer/editBeer/{beerId}";
-    private static final String DELETE_BEER_BY_ID_PATH = "/api/v1/beer/deleteBeer/{beerId}";
+    public static final String GET_LIST_BEER_PATH = "/api/v1/beer/listBeers";
+    public static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/getBeerById/{beerId}";
+    public static final String POST_CREATE_BEER_PATH = "/api/v1/beer/createBeer";
+    public static final String PUT_UPDATE_BEER_PATH = "/api/v1/beer/editBeer/{beerId}";
+    public static final String DELETE_BEER_BY_ID_PATH = "/api/v1/beer/deleteBeer/{beerId}";
 
     public Page<BeerDTO> listBeers() {
         return this.listBeers(null, null, null, null, null);
@@ -44,17 +42,17 @@ public class BeerClientImpl implements BeerClient {
 
         UriComponentsBuilder uriComponentsBuilder = getQueryForListBeer(beerName, beerStyle, showInventory, pageNumber, pageSize);
 
-        ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), String.class);
-        log.debug("String Response was: " + stringResponseEntity.getBody());
+        //ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), String.class);
+        //log.debug("String Response was: " + stringResponseEntity.getBody());
 
-        ResponseEntity<Map> mapResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), Map.class);
-        log.debug("Map Response was: " + mapResponseEntity.getBody());
+        //ResponseEntity<Map> mapResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), Map.class);
+        //log.debug("Map Response was: " + mapResponseEntity.getBody());
 
-        ResponseEntity<JsonNode> jsonResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), JsonNode.class);
-        log.debug("Json Response was: " + jsonResponseEntity.getBody());
-        log.debug("Json Response content was: " + jsonResponseEntity.getBody().findPath("content"));
-        jsonResponseEntity.getBody().findPath("content")
-            .elements().forEachRemaining(jsonNode -> log.debug("Get Beername: " + jsonNode.get("beerName").asText()));
+        //ResponseEntity<JsonNode> jsonResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), JsonNode.class);
+        //log.debug("Json Response was: " + jsonResponseEntity.getBody());
+        //log.debug("Json Response content was: " + jsonResponseEntity.getBody().findPath("content"));
+        //jsonResponseEntity.getBody().findPath("content")
+        //    .elements().forEachRemaining(jsonNode -> log.debug("Get Beername: " + jsonNode.get("beerName").asText()));
 
         ResponseEntity<BeerDTOPageImpl> pageResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), BeerDTOPageImpl.class);
         return pageResponseEntity.getBody();

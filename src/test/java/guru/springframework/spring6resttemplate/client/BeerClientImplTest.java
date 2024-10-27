@@ -4,6 +4,7 @@ import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,10 +16,12 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: Currently this test only works when the project spring-6-rest-mvc is running listening on port 80. 
-// TODO: Therefore the test will fail in github actions. We should mock the rest template
+
 @SpringBootTest
 @Slf4j
+// Remark: Currently this test only works when the project spring-6-rest-mvc is running listening on port 80. 
+// Remark: Therefore the test will fail in github actions. We should mock the rest template
+@Disabled("this tests are only running when server has been started")
 class BeerClientImplTest {
     
     @Autowired
