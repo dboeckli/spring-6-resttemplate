@@ -79,6 +79,7 @@ class BeerClientImplMockedTest {
         String givenPayload = objectMapper.writeValueAsString(getPage());
 
         mockServer.expect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestTo(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH))
             .andRespond(withSuccess(givenPayload, MediaType.APPLICATION_JSON));
         
@@ -107,6 +108,7 @@ class BeerClientImplMockedTest {
             .build().toUri();
 
         mockServer.expect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestTo(uri))
             .andExpect(queryParam("beerName", "ALE"))
             .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
@@ -119,6 +121,7 @@ class BeerClientImplMockedTest {
     @Test
     void testGetById() {
         mockServer.expect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.GET_BEER_BY_ID_PATH, givenBeerDTO.getId()))
             .andRespond(withSuccess(givenBeerDTOJson, MediaType.APPLICATION_JSON));
 
@@ -131,10 +134,12 @@ class BeerClientImplMockedTest {
         URI uri = UriComponentsBuilder.fromPath(BeerClientImpl.GET_BEER_BY_ID_PATH).build(givenBeerDTO.getId());
 
         mockServer.expect(method(HttpMethod.POST))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestTo(baseUrl + BeerClientImpl.POST_CREATE_BEER_PATH))
             .andRespond(withAccepted().location(uri));
 
         mockServer.expect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.GET_BEER_BY_ID_PATH, givenBeerDTO.getId()))
             .andRespond(withSuccess(givenBeerDTOJson, MediaType.APPLICATION_JSON));
 
@@ -147,10 +152,12 @@ class BeerClientImplMockedTest {
         URI uri = UriComponentsBuilder.fromPath(BeerClientImpl.GET_BEER_BY_ID_PATH).build(givenBeerDTO.getId());
         
         mockServer.expect(method(HttpMethod.PUT))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.PUT_UPDATE_BEER_PATH, givenBeerDTO.getId()))
             .andRespond(withAccepted().location(uri));
 
         mockServer.expect(method(HttpMethod.GET))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.GET_BEER_BY_ID_PATH, givenBeerDTO.getId()))
             .andRespond(withSuccess(givenBeerDTOJson, MediaType.APPLICATION_JSON));
 
@@ -161,6 +168,7 @@ class BeerClientImplMockedTest {
     @Test
     void testDeleteBeer() {
         mockServer.expect(method(HttpMethod.DELETE))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.DELETE_BEER_BY_ID_PATH, givenBeerDTO.getId()))
             .andRespond(withNoContent());
 
@@ -171,6 +179,7 @@ class BeerClientImplMockedTest {
     @Test
     void testDeleteBeerNoFound() {
         mockServer.expect(method(HttpMethod.DELETE))
+            .andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(requestToUriTemplate(baseUrl + BeerClientImpl.DELETE_BEER_BY_ID_PATH, givenBeerDTO.getId()))
             .andRespond(withResourceNotFound());
 
