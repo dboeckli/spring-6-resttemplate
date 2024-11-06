@@ -4,6 +4,9 @@ rest:
       url: "http://localhost:8080"
     user: "master"
     password: "password"
+    
+server:
+  port: 8081    
 
 spring:
   security:

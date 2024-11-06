@@ -5,6 +5,7 @@ Chapter 19: Spring Rest Template
 
 This project acts as a client to the spring-6-rest-mvc which runs on port 8080.
 Required other modules up and running:
+- this application runs on port 8081
 - authentication server on port 9000
 - mvc module running on port 8080
 
