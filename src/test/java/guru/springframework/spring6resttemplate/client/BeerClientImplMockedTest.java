@@ -3,6 +3,7 @@ package guru.springframework.spring6resttemplate.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import guru.springframework.spring6resttemplate.config.OAuthClientInterceptor;
 import guru.springframework.spring6resttemplate.config.RestTemplateBuilderConfig;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @RestClientTest
-@Import(RestTemplateBuilderConfig.class)
+@Import({ RestTemplateBuilderConfig.class, OAuthClientInterceptor.class })
 @Slf4j
 class BeerClientImplMockedTest {
 

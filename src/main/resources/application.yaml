@@ -4,4 +4,23 @@ rest:
       url: "http://localhost:8080"
     user: "master"
     password: "password"
-      
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:9000"
+      client:
+        registration:
+          springauth:
+            client-id: messaging-client
+            client-secret: secret
+            scope[0]: message.read
+            scope[1]: message.write
+            authorization-grant-type: client_credentials
+            provider: springauth
+        provider:
+          springauth:
+            authorization-uri: "http://localhost:9000/auth2/authorize"
+            token-uri: "http://localhost:9000/oauth2/token"
