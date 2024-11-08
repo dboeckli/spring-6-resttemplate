@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateBuilderConf
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @Configuration
@@ -18,12 +21,26 @@ public class RestTemplateBuilderConfig {
 
     @Value("${rest.template.password}")
     private String password;
-
+    
     @Bean
-    RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer){
-        return configurer.configure(new RestTemplateBuilder()
-            .basicAuthentication(user, password))
-            .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
+    @Primary
+    OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager(ClientRegistrationRepository clientRegistrationRepository,
+                                                               OAuth2AuthorizedClientService oAuth2AuthorizedClientService ){
+        OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
+            .clientCredentials()
+            .build();
+
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientService);
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+        return authorizedClientManager;
     }
 
+    @Bean
+    RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer,
+                                            OAuthClientInterceptor interceptor) {
+        return configurer.configure(new RestTemplateBuilder())
+            //.basicAuthentication(user, password))
+            .additionalInterceptors(interceptor)
+            .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
+    }
 }
