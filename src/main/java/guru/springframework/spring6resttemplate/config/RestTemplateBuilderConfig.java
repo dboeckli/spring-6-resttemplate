@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.zalando.logbook.Logbook;
+import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 @Configuration
 public class RestTemplateBuilderConfig {
@@ -38,9 +40,12 @@ public class RestTemplateBuilderConfig {
     @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer,
                                             OAuthClientInterceptor interceptor) {
+
+        LogbookClientHttpRequestInterceptor logbookInterceptor = new LogbookClientHttpRequestInterceptor(Logbook.builder().build());
+        
         return configurer.configure(new RestTemplateBuilder())
             //.basicAuthentication(user, password))
-            .additionalInterceptors(interceptor)
+            .additionalInterceptors(interceptor, logbookInterceptor)
             .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
     }
 }
