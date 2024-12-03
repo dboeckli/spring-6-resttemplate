@@ -5,9 +5,28 @@ Chapter 19: Spring Rest Template
 
 This project acts as a client to the spring-6-rest-mvc which runs on port 8080.
 Required other modules up and running:
-- this application runs on port 8081
+- this application runs on port 8080 -> should be changed
 - authentication server on port 9000
-- mvc module running on port 8080
+- mvc module running on port 8081
+
+```plaintext
++---------+               +----------------+               +--------------------+
+| Client  |               | Gateway Server |               | Authentication     |
+| (makes  |  -----------> | (Port 8080)    |  -----------> | Server (Port 9000) |
+| request)|  <----------- |                |  <----------- | (returns token)    |
++---------+               +----------------+               +--------------------+
+                                |   ^  
+                                |   |
+                                v   |
+                           +----------------+               
+                           | MVC Backend    |
+                           | (Port 8081)    |
+                           | (Executes      |
+                           | query and      |
+                           | creates        |
+                           | response)      |
+                           +----------------+
+```
 
 TODOS:
 - TODO: PROBABLY WE NEED TO CHANGE THIS MODULE RUNNING ON ANOTHER PORT AS 8080. CONFLICTS WITH THE SERVER MVC PART.
