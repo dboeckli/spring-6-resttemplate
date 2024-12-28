@@ -4,6 +4,7 @@ import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 @ActiveProfiles("testdocker")
+@Tag("docker-compose")
 class BeerClientImplWithDockerComposeIT {
     
     @Autowired
