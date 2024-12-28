@@ -4,8 +4,8 @@ import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,12 +23,31 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ActiveProfiles("testdocker")
 @Tag("docker-compose")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BeerClientImplWithDockerComposeIT {
     
     @Autowired
     private BeerClientImpl beerClient;
 
+    @BeforeAll
+    static void setUp(@Autowired BeerClientImpl beerClient) {
+        // Wait for the database to be fully initialized
+        Awaitility.await()
+            .atMost(30, TimeUnit.SECONDS)
+            .pollInterval(1, TimeUnit.SECONDS)
+            .until(() -> {
+                try {
+                    BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
+                    return page.getTotalElements() >= 2413;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
+    }
+
+
     @Test
+    @Order(1)
     void listBeers() {
         BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>)beerClient.listBeers(null, 
             null, 
@@ -46,8 +66,9 @@ class BeerClientImplWithDockerComposeIT {
     }
 
     @Test
+    @Order(8)
     void listBeersWithBeerName() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>)beerClient.listBeers("ALE", 
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>)beerClient.listBeers("IPA", 
             null, 
             null, 
             null, 
@@ -60,10 +81,11 @@ class BeerClientImplWithDockerComposeIT {
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
-        assertEquals(636, page.getTotalElements());
+        assertEquals(330, page.getTotalElements());
     }
     
     @Test
+    @Order(3)
     void getBeerById() {
         BeerDTO beer = beerClient.listBeers().getContent().getFirst();
         BeerDTO beerByIdDTO = beerClient.getBeerById(beer.getId());
@@ -72,6 +94,7 @@ class BeerClientImplWithDockerComposeIT {
     }
 
     @Test
+    @Order(11)
     void testCreateBeer() {
         BeerDTO newBeer = BeerDTO.builder()
             .beerName("Guguseli")
@@ -87,6 +110,7 @@ class BeerClientImplWithDockerComposeIT {
     }
 
     @Test
+    @Order(21)
     void testUpdateBeer() {
         BeerDTO beerToUpdate = beerClient.listBeers().getContent().getFirst();
         beerToUpdate.setBeerName("updated beer name");
@@ -97,6 +121,7 @@ class BeerClientImplWithDockerComposeIT {
     }
 
     @Test
+    @Order(91)
     void testDeleteBeer() {
         BeerDTO beerToDelete = beerClient.listBeers().getContent().getFirst();
 
