@@ -4,12 +4,12 @@ import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
@@ -19,10 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
+@ActiveProfiles("testdocker")
 // Remark: Currently this test only works when the project spring-6-rest-mvc is running listening on port 80. 
 // Remark: Therefore the test will fail in github actions. We should mock the rest template
-@Disabled("these tests are only running when the mvc-server and authentication-server have been started")
-class BeerClientImplTest {
+//@Disabled("these tests are only running when the mvc-server and authentication-server have been started")
+class BeerClientImplIT {
     
     @Autowired
     private BeerClientImpl beerClient;
@@ -41,6 +42,8 @@ class BeerClientImplTest {
         log.info("Number: " + page.getNumber());
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
+        
+        assertEquals(2413, page.getTotalElements());
     }
 
     @Test
@@ -57,6 +60,8 @@ class BeerClientImplTest {
         log.info("Number: " + page.getNumber());
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
+
+        assertEquals(636, page.getTotalElements());
     }
     
     @Test

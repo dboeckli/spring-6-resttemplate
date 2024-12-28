@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Spring6ResttemplateApplication With Docker Compose" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="docker" />
+    <module name="spring-6-resttemplate" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="guru.springframework.spring6resttemplate.Spring6ResttemplateApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
