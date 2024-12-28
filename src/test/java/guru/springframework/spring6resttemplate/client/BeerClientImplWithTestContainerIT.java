@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @Slf4j
-@Disabled
 class BeerClientImplWithTestContainerIT {
 
     final static int REST_MVC_PORT = TestSocketUtils.findAvailableTcpPort();
