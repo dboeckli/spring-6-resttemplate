@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Remark: Currently this test only works when the project spring-6-rest-mvc is running listening on port 80. 
 // Remark: Therefore the test will fail in github actions. We should mock the rest template
 //@Disabled("these tests are only running when the mvc-server and authentication-server have been started")
-class BeerClientImplIT {
+class BeerClientImplWithDockerComposeIT {
     
     @Autowired
     private BeerClientImpl beerClient;
