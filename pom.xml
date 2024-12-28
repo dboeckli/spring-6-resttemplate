@@ -345,11 +345,49 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>integration-tests</id>
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*WithDockerComposeIT.java</exclude>
+                                <exclude>**/*WithTestContainerIT.java</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
+                    <execution>
+                        <id>integration-tests-docker-compose</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*WithDockerComposeIT.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*WithTestContainerIT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests-testcontainers</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*WithTestContainerIT.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*WithDockerComposeIT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
