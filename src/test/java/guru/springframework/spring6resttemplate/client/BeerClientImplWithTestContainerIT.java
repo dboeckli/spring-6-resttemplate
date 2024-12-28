@@ -33,12 +33,12 @@ class BeerClientImplWithTestContainerIT {
     final static int REST_MVC_PORT = TestSocketUtils.findAvailableTcpPort();
     final static int AUTH_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
 
-    static final Network network = Network.newNetwork();
+    static final Network sharedNetwork = Network.newNetwork();
     
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:9")
         .withNetworkAliases("mysql")
-        .withNetwork(network)
+        .withNetwork(sharedNetwork)
         .withEnv("MYSQL_DATABASE", "restdb")
         .withEnv("MYSQL_USER", "restadmin")
         .withEnv("MYSQL_PASSWORD", "password")
@@ -51,7 +51,7 @@ class BeerClientImplWithTestContainerIT {
     @Container
     static GenericContainer<?> authServer = new GenericContainer<>("domboeckli/spring-6-auth-server:0.0.1-SNAPSHOT")
         .withNetworkAliases("auth-server")
-        .withNetwork(network)
+        .withNetwork(sharedNetwork)
         .withEnv("SERVER_PORT", String.valueOf(AUTH_SERVER_PORT))
         .withEnv("SPRING_SECURITY_OAUTH2_AUTHORIZATION_SERVER_ISSUER", "http://auth-server:" + AUTH_SERVER_PORT)
         .withExposedPorts(AUTH_SERVER_PORT)
@@ -60,7 +60,7 @@ class BeerClientImplWithTestContainerIT {
     @Container
     static GenericContainer<?> restMvc = new GenericContainer<>("domboeckli/spring-6-rest-mvc:0.0.1-SNAPSHOT")
         .withExposedPorts(REST_MVC_PORT)
-        .withNetwork(network)
+        .withNetwork(sharedNetwork)
         .withEnv("SPRING_PROFILES_ACTIVE", "localmysql")
         .withEnv("SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI", "http://auth-server:" + AUTH_SERVER_PORT)
         .withEnv("SERVER_PORT", String.valueOf(REST_MVC_PORT))
