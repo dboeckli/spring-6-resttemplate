@@ -76,12 +76,12 @@ class BeerClientImplWithDockerComposeIT {
             null,
             null);
 
-        log.info("TotalElements: " + page.getTotalElements());
-        log.info("NumberOfElements: " + page.getNumberOfElements());
-        log.info("TotalPages: " + page.getTotalPages());
-        log.info("Number: " + page.getNumber());
-        log.info("Pageable: " + page.getPageable());
-        log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
+        log.info("### testListBeersWithBeerName: TotalElements: " + page.getTotalElements());
+        log.info("### testListBeersWithBeerName: NumberOfElements: " + page.getNumberOfElements());
+        log.info("### testListBeersWithBeerName: TotalPages: " + page.getTotalPages());
+        log.info("### testListBeersWithBeerName: Number: " + page.getNumber());
+        log.info("### testListBeersWithBeerName: Pageable: " + page.getPageable());
+        log.info("### testListBeersWithBeerName: First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
         // TODO: SHOULD BE 336. SOMEHOW IT GET CHANGED
         //assertEquals(329, page.getTotalElements());  
