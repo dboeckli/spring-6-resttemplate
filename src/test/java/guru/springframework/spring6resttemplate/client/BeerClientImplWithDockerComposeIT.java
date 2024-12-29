@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +29,11 @@ class BeerClientImplWithDockerComposeIT {
 
     @Autowired
     private BeerClientImpl beerClient;
+
+    @BeforeEach
+    void setUp() {
+        Locale.setDefault(Locale.US);
+    }
 
     @BeforeAll
     static void setUp(@Autowired BeerClientImpl beerClient) {
@@ -84,7 +90,11 @@ class BeerClientImplWithDockerComposeIT {
         log.info("### testListBeersWithBeerName: First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
         // TODO: SHOULD BE 336. SOMEHOW IT GET CHANGED
-        //assertEquals(329, page.getTotalElements());  
+        log.info("### testListBeersWithBeerName: All found beer names:");
+        page.getContent().forEach(beer -> {
+            log.info("### DEBUG: Beer: " + beer.getBeerName());
+        });
+        assertEquals(336, page.getTotalElements());  
         assertTrue(page.getTotalElements() >= 300);
     }
 

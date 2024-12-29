@@ -58,7 +58,7 @@ class BeerClientImplWithTestContainerIT {
         .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("auth-server")));
 
     @Container
-    static GenericContainer<?> restMvc = new GenericContainer<>("domboeckli/spring-6-rest-mvc:0.0.1-SNAPSHOT")
+    static GenericContainer<?> restMvc = new GenericContainer<>("domboeckli/spring-6-rest-mvc:0.0.1")
         .withExposedPorts(REST_MVC_PORT)
         .withNetwork(sharedNetwork)
         .withEnv("SPRING_PROFILES_ACTIVE", "localmysql")
