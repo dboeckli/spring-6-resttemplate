@@ -34,12 +34,12 @@ spring:
     name: spring-6-resttemplate
   docker:
     compose:
-      enabled: false
+      enabled: true  
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://localhost:9000"
+          issuer-uri: "http://auth-server:9000"
       client:
         registration:
           springauth:

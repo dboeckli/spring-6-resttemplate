@@ -1,15 +1,16 @@
 ###
-GET http://localhost:8080/api/v1/beer/listBears
+GET http://localhost:8081/api/v1/beer/listBeers
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiI1YmEwMTAwMi1lYTI1LTQ5YWMtODQwNy00NzIxZDlkNDA2M2MiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczNTM4NzI0NSwic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vYXV0aC1zZXJ2ZXI6OTAwMCIsImV4cCI6MTczNTM4Nzg0NSwiaWF0IjoxNzM1Mzg3MjQ1LCJqdGkiOiIxOGYyZDRlNy04MmI2LTRlODgtOTY0Mi1hOGQ3MmRhZDFiYWIifQ.l0mNSQlrrr8qB_NZ8dC0rqiNWwzeKy7eo6nOuQm9tE61BYJ7hUP59i9f2HZBm73iwnSmN2Vx_jBdBi27bpYE2kgx3WkVkwfRaIQpze2mNY_kb_k2-8OKOMKkDRl8Vd7708hyRl6fSyP1c5VhfyDL86YrkyB6Qj2pMUSQv1i7XvO8EAezi0t067OXj8UPTkEmBqOpPClvMe6Vz1BC1cRByeJ7JsE0drOtrwh-B-nPmMJsZ3FoqYhwM0WWBw5_x6RQAcEXWI8Xyp_uJHfge591_AnCD6mRYwlNC_bE8z1FSoHC4z_b62dOMvlArzI7-Kxpc3Y6aejRcKUbS_hG_QOnVg
+
+###
+GET http://localhost:8081/api/v1/beer/getBeerById/49e0182c-b4d9-4eb1-ab9e-839c40c0c85f
 Accept: application/json
 Content-Type: application/json
 
 ###
-GET http://localhost:8080/api/v1/beer/getBeerById/49e0182c-b4d9-4eb1-ab9e-839c40c0c85f
-Accept: application/json
-Content-Type: application/json
-
-###
-POST http://localhost:8080/api/v1/beer/createBear
+POST http://localhost:8081/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
 
@@ -23,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:8080/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 
@@ -37,7 +38,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:8080/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
 Accept: application/json
 Content-Type: application/json
 
@@ -46,6 +47,6 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:8080/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
