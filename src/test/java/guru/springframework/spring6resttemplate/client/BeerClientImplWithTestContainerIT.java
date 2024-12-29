@@ -140,7 +140,7 @@ class BeerClientImplWithTestContainerIT {
     }
 
     @Test
-    void listBeers() {
+    void testListBeers() {
         BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null,
             null,
             null,
@@ -155,6 +155,24 @@ class BeerClientImplWithTestContainerIT {
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
         assertEquals(2413, page.getTotalElements());
+    }
+
+    @Test
+    void testListBeersWithBeerName() {
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA",
+            null,
+            null,
+            null,
+            null);
+
+        log.info("TotalElements: " + page.getTotalElements());
+        log.info("NumberOfElements: " + page.getNumberOfElements());
+        log.info("TotalPages: " + page.getTotalPages());
+        log.info("Number: " + page.getNumber());
+        log.info("Pageable: " + page.getPageable());
+        log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
+
+        assertEquals(336, page.getTotalElements());
     }
 
 }
