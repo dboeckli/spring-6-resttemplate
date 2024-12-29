@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/delete-package-versions@v5
         id: delete-all-feature-and-pr-package
+        if: false
         with:
           # TODO: correct package name. List packages before and after deletion
           package-name: 'guru.springframework.spring-6-resttemplate'
@@ -31,6 +32,7 @@ jobs:
 
       - uses: actions/delete-package-versions@v5
         id: delete-all-packages
+        if: false
         with:
           # TODO: correct package name. List packages before and after deletion
           package-name: 'guru.springframework.spring-6-resttemplate'
