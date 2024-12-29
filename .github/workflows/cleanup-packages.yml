@@ -22,7 +22,7 @@ jobs:
         id: delete-all-feature-and-pr-package
         with:
           # TODO: correct package name. List packages before and after deletion
-          package-name: 'ch.dboeckli.template.spring-6-project-template'
+          package-name: 'guru.springframework.spring-6-resttemplate'
           package-type: 'maven'
           min-versions-to-keep: 3
           delete-only-untagged-versions: 'true'
@@ -34,7 +34,7 @@ jobs:
         id: delete-all-packages
         with:
           # TODO: correct package name. List packages before and after deletion
-          package-name: 'ch.dboeckli.template.spring-6-project-template'
+          package-name: 'guru.springframework.spring-6-resttemplate'
           package-type: 'maven'
           min-versions-to-keep: 3
           delete-only-untagged-versions: 'true'
