@@ -47,6 +47,8 @@ With Gateway
                            | response)      |
                            +----------------+
 ```
+The Integration Test only covers the scenario without gateway. See project spring-6-restclient for integration test with gateway.
+
 This repository is for an example application built in my [Spring Framework 6 - Beginner to Guru](https://www.udemy.com/course/spring-framework-6-beginner-to-guru/?referralCode=2BD0B7B7B6B511D699A9) online course
 
 The application is a simple Spring Boot 3 / Spring Framework 6 web application. It is used to help students learn how
