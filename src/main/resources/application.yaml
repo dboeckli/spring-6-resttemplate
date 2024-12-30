@@ -35,6 +35,8 @@ spring:
   docker:
     compose:
       enabled: false
+      stop:
+        command: down
   security:
     oauth2:
       resourceserver:

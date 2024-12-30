@@ -36,6 +36,8 @@ spring:
     compose:
       file: compose.yaml
       enabled: true
+      stop:
+        command: down
       skip:
         in-tests: false
       
