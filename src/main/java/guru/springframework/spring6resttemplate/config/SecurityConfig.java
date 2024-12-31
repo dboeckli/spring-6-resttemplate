@@ -17,6 +17,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequests -> {
                 authorizeRequests
                     .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()  // permit all actuator endpoints
+                    .requestMatchers("/beers/**").permitAll()
                     .anyRequest().authenticated();
             });
         return http.build();
