@@ -8,6 +8,8 @@ Required other modules up and running:
 - authentication server on port 9000
 - mvc module running on port 8081
 
+Website: http://localhost:8086/beers
+
 All components are started automatically with the help of docker-compose.
 
 Without Gateway

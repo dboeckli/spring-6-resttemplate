@@ -38,6 +38,14 @@
         <logbook.version>3.10.0</logbook.version>
         <logstash-logback.version>8.0</logstash-logback.version>
 
+        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version> <!-- latest: 4.1.0 -->
+        <webjars-locator.version>0.52</webjars-locator.version>
+        <!-- 
+        this is only for local development, when opening the html file in the browser.
+        therefore we exclude those file being packaged into the spring boot jar. 
+         -->
+        <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir> 
+
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -141,6 +149,19 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback.version}</version>
         </dependency>
+
+        <!-- webjars -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>${webjars-locator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${webjars-bootstrap.version}</version>
+        </dependency>
+        <!-- end of webjars -->
         
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -172,6 +193,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/templates/webjars/**</exclude> 
+                </excludes>
+            </resource>
+        </resources>
+        
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -205,6 +235,103 @@
         </pluginManagement>
         
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-webjars-css</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>bootstrap</artifactId>
+                                    <version>${webjars-bootstrap.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${webjars-source-dir}/css</outputDirectory>
+                                    <includes>**/css/*.css</includes>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-webjars-fonts</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>bootstrap</artifactId>
+                                    <version>${webjars-bootstrap.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${webjars-source-dir}/fonts</outputDirectory>
+                                    <includes>**/fonts/*</includes>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-webjars-js</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>bootstrap</artifactId>
+                                    <version>${webjars-bootstrap.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${webjars-source-dir}/js</outputDirectory>
+                                    <includes>**/js/*.js</includes>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-webjars-less</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>bootstrap</artifactId>
+                                    <version>${webjars-bootstrap.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${webjars-source-dir}/less</outputDirectory>
+                                    <includes>**/less/*.less</includes>
+                                    <fileMappers>
+                                        <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                                       
+                </executions>
+
+            </plugin>
+            
             <!-- we need a port to be able to start the local profile -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
