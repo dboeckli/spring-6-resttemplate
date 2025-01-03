@@ -40,7 +40,7 @@
         <logbook.version>3.10.0</logbook.version>
         <logstash-logback.version>8.0</logstash-logback.version>
 
-        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version> <!-- latest: 4.1.0 -->
+        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version> 
         <webjars-locator.version>0.52</webjars-locator.version>
         <!-- 
         this is only for local development, when opening the html file in the browser.
