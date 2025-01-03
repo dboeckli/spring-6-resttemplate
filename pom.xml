@@ -34,9 +34,23 @@
 
         <github.acions.build>false</github.acions.build>
         <skip.docker.publish>true</skip.docker.publish>
+        
+        <spring-6-rest-mvc.version>0.0.2-SNAPSHOT</spring-6-rest-mvc.version>
 
         <logbook.version>3.10.0</logbook.version>
         <logstash-logback.version>8.0</logstash-logback.version>
+
+        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version> 
+        <webjars-locator.version>0.52</webjars-locator.version>
+        <!-- 
+        this is only for local development, when opening the html file in the browser.
+        therefore we exclude those file being packaged into the spring boot jar. 
+         -->
+        <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir> 
+        
+        <!-- openapi -->
+        <openapi-generator-maven-plugin.version>7.10.0</openapi-generator-maven-plugin.version>
+        <openapi-jackson-databind-nullable.version>0.2.6</openapi-jackson-databind-nullable.version>
 
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -94,9 +108,14 @@
     </distributionManagement>
 
     <dependencies>
+      
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -137,6 +156,26 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback.version}</version>
         </dependency>
+
+        <!-- dependencies for swagger/openapi generated classes -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${openapi-jackson-databind-nullable.version}</version>
+        </dependency>
+
+        <!-- webjars -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>${webjars-locator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${webjars-bootstrap.version}</version>
+        </dependency>
+        <!-- end of webjars -->
         
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -168,6 +207,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/templates/webjars/**</exclude> 
+                </excludes>
+            </resource>
+        </resources>
+        
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -201,6 +249,121 @@
         </pluginManagement>
         
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>get-rest-mvc-openapi-json</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                                    <artifactId>spring-6-rest-mvc</artifactId>
+                                    <type>json</type>
+                                    <classifier>openapi</classifier>
+                                    <version>${spring-6-rest-mvc.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
+                                    <destFileName>openapi.json</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                                    <artifactId>spring-6-rest-mvc</artifactId>
+                                    <type>yaml</type>
+                                    <classifier>openapi</classifier>
+                                    <version>${spring-6-rest-mvc.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
+                                    <destFileName>openapi.yaml</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                                       
+                </executions>
+
+            </plugin>
+
+           <!-- 
+           See 
+           https://openapi-generator.tech/docs/generators/spring/ and
+           https://openapi-generator.tech/docs/generators/java/
+           -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-openapi-classes-for-restmvc</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.build.directory}/restmvc-openapi/openapi.json</inputSpec>
+                            
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+
+                            <apiPackage>ch.dboeckli.restmvc.openapi.api</apiPackage>
+                            <modelPackage>ch.dboeckli.restmvc.openapi.model</modelPackage>
+                            <invokerPackage>ch.dboeckli.restmvc.openapi.invoker</invokerPackage>
+
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            
+                            <configOptions>
+                                <library>resttemplate</library>
+                                <useJakartaEe>true</useJakartaEe>
+                                <generateClientAsBean>true</generateClientAsBean>
+                                <generateBuilders>true</generateBuilders>
+                                <!-- https://openapi-generator.tech/docs/generators/java/ -->
+                                <!--
+                                <dateLibrary>legacy</dateLibrary>
+                                <openApiNullable>true</openApiNullable>
+                                -->
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>jackson-databind-nullable</artifactId>
+                        <version>${openapi-jackson-databind-nullable.version}</version>
+                    </dependency>
+                    <!-- 
+                    TODO:
+                    this is a workaround to overwrite the wrong jackson version from this plugin. 
+                    when it get fixed in the plugin we do not need this anymore. 
+                    workaround needed for: 7.10.0
+                    -->
+                    <dependency>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-databind</artifactId>
+                        <version>${jackson-bom.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
+                        <version>${jackson-bom.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-annotations</artifactId>
+                        <version>${jackson-bom.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+           
             <!-- we need a port to be able to start the local profile -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
