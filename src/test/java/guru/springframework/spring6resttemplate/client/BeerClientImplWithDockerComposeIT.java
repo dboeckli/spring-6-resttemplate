@@ -76,7 +76,16 @@ class BeerClientImplWithDockerComposeIT {
     @Test
     @Order(8)
     void testListBeersWithBeerName() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA",
+        Awaitility.await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(1, TimeUnit.SECONDS)
+            .until(() -> {
+                BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
+                return page.getTotalElements() >= 2413; // Erwartete Mindestanzahl
+            });
+
+        String beerName = "IPA";
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(beerName,
             null,
             null,
             null,
@@ -90,8 +99,13 @@ class BeerClientImplWithDockerComposeIT {
         log.info("### testListBeersWithBeerName: First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
         // TODO: SHOULD BE 336. SOMEHOW IT GET CHANGED. Possible Cause: Caching or Paging issues?
-        // assertEquals(336, page.getTotalElements());  
-        assertTrue(page.getTotalElements() >= 300);
+        assertEquals(336, page.getTotalElements());  
+        //assertTrue(page.getTotalElements() >= 300);
+
+        assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(beerName.toLowerCase())),
+            "Alle gefundenen Biere sollten '" + beerName + "' im Namen haben");
+
+        log.info("Gefundene Biere mit Namen '{}': {}", beerName, page.getTotalElements());
     }
 
     @Test
