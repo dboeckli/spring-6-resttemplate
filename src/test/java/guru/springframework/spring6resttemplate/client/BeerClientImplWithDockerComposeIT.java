@@ -84,8 +84,8 @@ class BeerClientImplWithDockerComposeIT {
                 return page.getTotalElements() >= 2413; // Erwartete Mindestanzahl
             });
 
-        String beerName = "IPA";
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(beerName,
+        String givenBeerName = "IPA";
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(givenBeerName,
             null,
             null,
             null,
@@ -100,10 +100,10 @@ class BeerClientImplWithDockerComposeIT {
 
         assertEquals(336, page.getTotalElements());  
 
-        assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(beerName.toLowerCase())),
-            "Alle gefundenen Biere sollten '" + beerName + "' im Namen haben");
+        assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(givenBeerName.toLowerCase())),
+            "Alle gefundenen Biere sollten '" + givenBeerName + "' im Namen haben");
 
-        log.info("Gefundene Biere mit Namen '{}': {}", beerName, page.getTotalElements());
+        log.info("Gefundene Biere mit Namen '{}': {}", givenBeerName, page.getTotalElements());
     }
 
     @Test
