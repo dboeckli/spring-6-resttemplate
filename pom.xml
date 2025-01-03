@@ -297,6 +297,10 @@
 
             </plugin>
 
+           <!-- 
+           See https://openapi-generator.tech/docs/generators/spring/ and
+           https://openapi-generator.tech/docs/generators/java/
+           -->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -312,9 +316,8 @@
                             
                             <inputSpec>${project.build.directory}/restmvc-openapi/openapi.json</inputSpec>
                             
-                            <generatorName>spring</generatorName>
-                            <library>spring-boot</library>
-                            <!--<library>resttemplate</library>-->
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
 
                             <apiPackage>ch.dboeckli.restmvc.openapi.api</apiPackage>
                             <modelPackage>ch.dboeckli.restmvc.openapi.model</modelPackage>
@@ -327,7 +330,10 @@
                             <generateModelTests>false</generateModelTests>
                             
                             <configOptions>
+                                <library>resttemplate</library>
                                 <useJakartaEe>true</useJakartaEe>
+                                <generateClientAsBean>true</generateClientAsBean>
+                                <generateBuilders>true</generateBuilders>
                                 <!-- https://openapi-generator.tech/docs/generators/java/ -->
                                 <!--
                                 <dateLibrary>legacy</dateLibrary>
@@ -338,13 +344,6 @@
                     </execution>
                 </executions>
                 <dependencies>
-                    <!--
-                    <dependency>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>javax.annotation-api</artifactId>
-                        <version>1.3.2</version>
-                    </dependency>
-                    -->
                     <dependency>
                         <groupId>org.openapitools</groupId>
                         <artifactId>jackson-databind-nullable</artifactId>
