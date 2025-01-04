@@ -293,6 +293,8 @@
            See 
            https://openapi-generator.tech/docs/generators/spring/ and
            https://openapi-generator.tech/docs/generators/java/
+           TODO: question is if thous should be moved into the project providing the interface -> rest-mvc 
+           See: https://github.com/dboeckli/spring-6-project-template/issues/24
            -->
             <plugin>
                 <groupId>org.openapitools</groupId>
@@ -306,6 +308,14 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.build.directory}/restmvc-openapi/openapi.json</inputSpec>
+                            <cleanupOutput>true</cleanupOutput>
+                            
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}-openapi</artifactId>
+                            <artifactVersion>${project.version}</artifactVersion>
+                            
+                            <modelNameSuffix>OpenApi</modelNameSuffix>
+                            <apiNameSuffix>OpenApi</apiNameSuffix>
                             
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
