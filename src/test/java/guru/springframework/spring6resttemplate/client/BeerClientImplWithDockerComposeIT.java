@@ -76,22 +76,25 @@ class BeerClientImplWithDockerComposeIT {
     @Test
     @Order(8)
     void testListBeersWithBeerName() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA",
+        Awaitility.await()
+            .atMost(10, TimeUnit.SECONDS)
+            .pollInterval(1, TimeUnit.SECONDS)
+            .until(() -> {
+                BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
+                return page.getTotalElements() >= 2413; 
+            });
+
+        String givenBeerName = "IPA";
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(givenBeerName,
             null,
             null,
             null,
             null);
 
-        log.info("### testListBeersWithBeerName: TotalElements: " + page.getTotalElements());
-        log.info("### testListBeersWithBeerName: NumberOfElements: " + page.getNumberOfElements());
-        log.info("### testListBeersWithBeerName: TotalPages: " + page.getTotalPages());
-        log.info("### testListBeersWithBeerName: Number: " + page.getNumber());
-        log.info("### testListBeersWithBeerName: Pageable: " + page.getPageable());
-        log.info("### testListBeersWithBeerName: First BeerDTO: " + page.getContent().getFirst().getBeerName());
-
-        // TODO: SHOULD BE 336. SOMEHOW IT GET CHANGED. Possible Cause: Caching or Paging issues?
-        // assertEquals(336, page.getTotalElements());  
-        assertTrue(page.getTotalElements() >= 300);
+        assertEquals(336, page.getTotalElements());  
+        assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(givenBeerName.toLowerCase())),
+            "Alle gefundenen Biere sollten '" + givenBeerName + "' im Namen haben");
+        log.info("Gefundene Biere mit Namen '{}': {}", givenBeerName, page.getTotalElements());
     }
 
     @Test
