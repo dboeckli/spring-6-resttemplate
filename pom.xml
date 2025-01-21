@@ -325,7 +325,6 @@
                                     <artifactId>spring-6-rest-mvc</artifactId>
                                     <type>json</type>
                                     <classifier>openapi</classifier>
-                                    <version>${spring-6-rest-mvc.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
                                     <destFileName>openapi.json</destFileName>
@@ -335,7 +334,6 @@
                                     <artifactId>spring-6-rest-mvc</artifactId>
                                     <type>yaml</type>
                                     <classifier>openapi</classifier>
-                                    <version>${spring-6-rest-mvc.version}</version>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
                                     <destFileName>openapi.yaml</destFileName>
