@@ -16,10 +16,14 @@
     <name>${project.artifactId}</name>
     <description>spring-6-resttemplate</description>
 
+    <organization>
+        <name>dboeckli</name>
+    </organization>
+
     <scm>
-        <connection>scm:git:https://github.com/${organization.name}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:https://github.com/${organization.name}/${project.artifactId}.git</developerConnection>
-        <url>https://github.com/${organization.name}/${project.artifactId}.git</url>
+        <connection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</developerConnection>
+        <url>https://github.com/${project.organization.name}/${project.artifactId}.git</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -30,24 +34,23 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <organization.name>dboeckli</organization.name>
-
         <github.acions.build>false</github.acions.build>
         <skip.docker.publish>true</skip.docker.publish>
-        
+        <skip.start.stop.springboot>false</skip.start.stop.springboot>
+
         <spring-6-rest-mvc.version>0.0.2-SNAPSHOT</spring-6-rest-mvc.version>
 
         <logbook.version>3.10.0</logbook.version>
         <logstash-logback.version>8.0</logstash-logback.version>
 
-        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version> 
+        <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version>
         <webjars-locator.version>0.52</webjars-locator.version>
         <!-- 
         this is only for local development, when opening the html file in the browser.
         therefore we exclude those file being packaged into the spring boot jar. 
          -->
-        <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir> 
-        
+        <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir>
+
         <!-- openapi -->
         <openapi-generator-maven-plugin.version>7.10.0</openapi-generator-maven-plugin.version>
         <openapi-jackson-databind-nullable.version>0.2.6</openapi-jackson-databind-nullable.version>
@@ -75,7 +78,7 @@
             Configure maven settings of IntelliJ to use your personal settings.xml 
             -->
             <id>github</id>
-            <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
+            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -98,17 +101,36 @@
             </properties>
         </profile>
     </profiles>
-    
+
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub dboeckli Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
+            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
         </repository>
     </distributionManagement>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                <artifactId>spring-6-rest-mvc</artifactId>
+                <type>json</type>
+                <classifier>openapi</classifier>
+                <version>${spring-6-rest-mvc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                <artifactId>spring-6-rest-mvc</artifactId>
+                <type>yaml</type>
+                <classifier>openapi</classifier>
+                <version>${spring-6-rest-mvc.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-      
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -176,7 +198,7 @@
             <version>${webjars-bootstrap.version}</version>
         </dependency>
         <!-- end of webjars -->
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -211,11 +233,11 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>**/templates/webjars/**</exclude> 
+                    <exclude>**/templates/webjars/**</exclude>
                 </excludes>
             </resource>
         </resources>
-        
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -247,8 +269,45 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        
+
         <plugins>
+            <!-- we need a port to be able to start the local profile -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reserve-tomcat-port</id>
+                        <goals>
+                            <goal>reserve-network-port</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <portNames>
+                                <portName>tomcat.http.port</portName>
+                            </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -284,18 +343,17 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                                       
+
                 </executions>
 
             </plugin>
 
-           <!-- 
-           See 
-           https://openapi-generator.tech/docs/generators/spring/ and
-           https://openapi-generator.tech/docs/generators/java/
-           TODO: question is if thous should be moved into the project providing the interface -> rest-mvc 
-           See: https://github.com/dboeckli/spring-6-project-template/issues/24
-           -->
+            <!-- 
+            See 
+            https://openapi-generator.tech/docs/generators/spring/ and
+            https://openapi-generator.tech/docs/generators/java/
+            See: https://github.com/dboeckli/spring-6-project-template/issues/24
+            -->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -307,16 +365,20 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.build.directory}/restmvc-openapi/openapi.json</inputSpec>
+                            <!-- TODO AND WORKAROUND: openapi bug: https://github.com/OpenAPITools/openapi-generator/issues/14648 
+                            another workaround is explained in the ticket with the help of build-helper-maven-plugin where the backslashes are replaced with forward slashes.
+                            -->
+                            <!--<inputSpec>${project.build.directory}\restmvc-openapi\openapi.json</inputSpec>-->
+                            <inputSpec>./target/restmvc-openapi/openapi.json</inputSpec>
                             <cleanupOutput>true</cleanupOutput>
-                            
+
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}-openapi</artifactId>
                             <artifactVersion>${project.version}</artifactVersion>
-                            
+
                             <modelNameSuffix>OpenApi</modelNameSuffix>
                             <apiNameSuffix>OpenApi</apiNameSuffix>
-                            
+
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
 
@@ -326,10 +388,10 @@
 
                             <generateApiDocumentation>false</generateApiDocumentation>
                             <generateModelDocumentation>false</generateModelDocumentation>
-                            
+
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
-                            
+
                             <configOptions>
                                 <library>resttemplate</library>
                                 <useJakartaEe>true</useJakartaEe>
@@ -373,30 +435,24 @@
                     </dependency>
                 </dependencies>
             </plugin>
-           
-            <!-- we need a port to be able to start the local profile -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>reserve-tomcat-port</id>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <portNames>
-                                <portName>tomcat.http.port</portName>
-                            </portNames>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
+                    <layers>
+                        <enabled>true</enabled>
+                        <includeLayerTools>true</includeLayerTools>
+                    </layers>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+
                 <executions>
                     <execution>
                         <id>add-build-infos</id>
@@ -421,14 +477,16 @@
                             <goal>stop</goal>
                         </goals>
                         <configuration>
+                            <skip>${skip.start.stop.springboot}</skip>
                             <wait>1000</wait> <!-- 1000 milliseconds is default -->
                             <maxAttempts>120</maxAttempts> <!-- 30 attempts is default, combined with wait it results to 30 sec. We wait 60 seconds. -->
-                            <profiles>local</profiles>
+                            <profiles>docker</profiles>
                             <arguments>
                                 <argument>-Xmx1024m</argument>
                                 <argument>--server.port=${tomcat.http.port}</argument>
                                 <argument>--spring.cloud.kubernetes.enabled=false</argument>
                             </arguments>
+                            <jmxPort>${jmx.server.port}</jmxPort>
                         </configuration>
                     </execution>
 
@@ -458,12 +516,11 @@
                         <configuration>
                             <skip>${skip.docker.publish}</skip>
                             <image>
-                                <name>ghcr.io/${organization.name}/${project.artifactId}:latest</name>
+                                <name>ghcr.io/${project.organization.name}/${project.artifactId}:latest</name>
                                 <tags>
-                                    ghcr.io/${organization.name}/${project.artifactId}:${project.version}
+                                    ghcr.io/${project.organization.name}/${project.artifactId}:${project.version}
                                 </tags>
                                 <publish>true</publish>
-                                <verboseLogging>true</verboseLogging>
                             </image>
                             <docker>
                                 <publishRegistry>
@@ -485,7 +542,6 @@
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
-
                             <skip>${skip.docker.publish}</skip>
                             <image>
                                 <!--suppress UnresolvedMavenProperty -->
@@ -495,7 +551,6 @@
                                     ${env.DOCKER_USER}/${project.artifactId}:${project.version}
                                 </tags>
                                 <publish>true</publish>
-                                <verboseLogging>true</verboseLogging>
                             </image>
                             <docker>
                                 <publishRegistry>
@@ -509,13 +564,61 @@
                             </docker>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
 
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jacoco-create-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                            <outputDirectory>target/site/jacoco</outputDirectory> <!-- default -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
+                            <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                        </configuration>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
+                    <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default</id>
@@ -573,49 +676,6 @@
                         </configuration>
                     </execution>
 
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jacoco-create-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/jacoco-reports</outputDirectory>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
 
