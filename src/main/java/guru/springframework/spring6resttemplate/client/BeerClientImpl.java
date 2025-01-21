@@ -71,7 +71,11 @@ public class BeerClientImpl implements BeerClient {
         //return response.getBody();
 
         URI location = restTemplate.postForLocation(POST_CREATE_BEER_PATH, newBeer);
-        return restTemplate.getForObject(location.getPath(), BeerDTO.class);
+        if (location != null) {
+            return restTemplate.getForObject(location.getPath(), BeerDTO.class);
+        } else {
+            throw new RuntimeException("Failed to create beer. Location header is missing.");
+        }
     }
 
     @Override

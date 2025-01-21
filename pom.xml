@@ -484,7 +484,6 @@
                                 <argument>--server.port=${tomcat.http.port}</argument>
                                 <argument>--spring.cloud.kubernetes.enabled=false</argument>
                             </arguments>
-                            <jmxPort>${jmx.server.port}</jmxPort>
                         </configuration>
                     </execution>
 
