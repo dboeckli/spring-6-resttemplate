@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ActiveProfiles("testdocker")
 @Tag("docker-compose")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BeerClientImplWithDockerComposeIT {
 
