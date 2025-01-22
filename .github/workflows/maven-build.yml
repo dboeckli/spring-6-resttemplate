@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [ "main", "master" ]
   schedule:
-    - cron: '5 2 * * *' # daily at 2:05
+    - cron: '10 4 * * *' # daily at 4:15
 jobs:
 
   setup:

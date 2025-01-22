@@ -1,5 +1,6 @@
 package guru.springframework.spring6resttemplate.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
@@ -7,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.DirtiesContext;
@@ -18,6 +21,8 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcDatabaseInitDone;
+import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcReady;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -38,21 +43,12 @@ class BeerClientImplWithDockerComposeIT {
     }
 
     @BeforeAll
-    static void setUp(@Autowired BeerClientImpl beerClient) {
-        // Wait for the database to be fully initialized
-        Awaitility.await()
-            .atMost(30, TimeUnit.SECONDS)
-            .pollInterval(1, TimeUnit.SECONDS)
-            .until(() -> {
-                try {
-                    BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
-                    log.info("### Waiting for database to be fully initialized. Inserted: Beers: {}", page.getTotalElements());
-                    return page.getTotalElements() >= 2413;
-                } catch (Exception e) {
-                    return false;
-                }
-            });
-        log.info("Database is fully initialized.");
+    static void setUp(@Autowired BeerClientImpl beerClient,
+                      @Autowired TestRestTemplate restTemplate,
+                      @Autowired ObjectMapper objectMapper,
+                      @Value("${rest.template.base.url}") String mvcUrl) {
+        checkMvcReady(restTemplate, objectMapper, mvcUrl);
+        checkMvcDatabaseInitDone(beerClient);
     }
 
 
