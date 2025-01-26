@@ -2,17 +2,19 @@
 GET http://localhost:8081/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiJjODA5MjNhMi0zZDIzLTRhNjEtYmUxMS05NmI5OThmNzE1OWUiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczNTU3OTIyMSwic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vYXV0aC1zZXJ2ZXI6OTAwMCIsImV4cCI6MTczNTU3OTgyMSwiaWF0IjoxNzM1NTc5MjIxLCJqdGkiOiJmODgwN2U3NC05Zjc2LTQxOWUtYWZjZS04MzA1M2NmOWM4MDMifQ.KPaCecSf7L-3cGmuSJUj-5t92WEgMEVIM9roMBLL2ZohubxHsdMSj5Le2fUNTQBi1ajgNrmSUBsSCr0aOL8tnG-IF_dRLyJOAqX_T2Ae7vwH4OJDWTqBYaSMMrhMgspp3mNjC3pLAmPvS5vu2bohvyjqy84QBPH6Zm4MWkyb_4QkLmKdBfA7ejLGumQnjBih5WWUvZiOhLG0WJJcahhKbHL7NohFamysh65n0C3H0tBNZuClnwnQ8u-ftfx5p6U_vxpeUQVhoyM2UHY_nuFtOe4Kywx4rPb5tEzTGvab8l8jMFn1lMspqQ-TuRK9HwJkUU_HB5Ek5XHL1jlI8D89zA
+Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-GET http://localhost:8081/api/v1/beer/getBeerById/49e0182c-b4d9-4eb1-ab9e-839c40c0c85f
+GET http://localhost:8081/api/v1/beer/getBeerById/5bdbb1e6-dfc9-4829-8e0a-4edc74ffc07e
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
 POST http://localhost:8081/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
   "version": 0,
@@ -27,6 +29,7 @@ Content-Type: application/json
 PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
   "version": 0,
@@ -41,6 +44,7 @@ Content-Type: application/json
 PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
   "beerName": "patched Beername"
@@ -50,3 +54,4 @@ Content-Type: application/json
 DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{$auth.token("auth-id")}}
