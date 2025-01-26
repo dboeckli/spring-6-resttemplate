@@ -3,4 +3,4 @@ POST http://localhost:9000/oauth2/token
 Authorization: Basic messaging-client secret
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=client_credentials&client_id=user&client_secret=password&scope=message.read message.write
+grant_type=client_credentials&scope=message.read message.write
