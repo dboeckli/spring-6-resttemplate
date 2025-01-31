@@ -11,7 +11,7 @@
     "enabled": true
   },
   "docker": {
-    "registryUrls": ["https://registry.hub.docker.com"]
+    "registryUrls": ["https://index.docker.io"]
   },
   "packageRules": [
     {
