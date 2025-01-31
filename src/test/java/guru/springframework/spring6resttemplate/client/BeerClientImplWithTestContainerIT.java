@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 class BeerClientImplWithTestContainerIT {
 
-    final static int REST_MVC_PORT = TestSocketUtils.findAvailableTcpPort();
-    final static int AUTH_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
+    static final int REST_MVC_PORT = TestSocketUtils.findAvailableTcpPort();
+    static final int AUTH_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
 
     static final Network sharedNetwork = Network.newNetwork();
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:9")
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.4")
             .withNetworkAliases("mysql")
             .withNetwork(sharedNetwork)
             .withEnv("MYSQL_DATABASE", "restdb")

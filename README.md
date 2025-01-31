@@ -7,6 +7,7 @@ Required other modules up and running:
 - this application runs on port 8086 
 - authentication server on port 9000
 - mvc module running on port 8081
+- gateway module running on port 8080
 
 ## Web Interface
 
@@ -16,7 +17,8 @@ This application includes a web interface that allows users to interact with the
 - Navigate through pages of beer listings
 - View details of individual beers
 
-To access the web interface, start the application and navigate to: http://localhost:8086/beers
+To access the web interface, start the application and navigate to: 
+- http://localhost:8086/beers
 
 ## Overview
 All components are started automatically with the help of docker-compose.

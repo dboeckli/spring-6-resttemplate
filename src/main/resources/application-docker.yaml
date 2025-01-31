@@ -2,7 +2,9 @@ rest:
   template:
     base:
       # restmvc url
-      url: "http://localhost:8081"
+      #url: "http://localhost:8081"
+      # gateway url
+      url: http://localhost:8080
     user: "master"
     password: "password"
     
