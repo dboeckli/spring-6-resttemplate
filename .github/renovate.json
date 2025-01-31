@@ -24,7 +24,8 @@
       "versioning": "maven",
       "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+(-SNAPSHOT)?$/",
       "ignoreUnstable": false,
-      "preferStable": true,
+      "separateMinorPatch": true,
+      "separateMajorMinor": true,
       "automerge": false,
       "automergeType": "pr",
       "ignoreTests": true
