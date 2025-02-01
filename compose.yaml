@@ -102,7 +102,7 @@ services:
         auth_health=$$(wget -q -O - http://auth-server:9000/actuator/health/readiness 2>/dev/null)
         mvc_health=$$(wget -q -O - http://rest-mvc:8081/actuator/health/readiness 2>/dev/null)
         gateway_health=$$(wget -q -O - http://gateway:8080/actuator/health/readiness 2>/dev/null)
-
+      
         echo "{
           \"timestamp\": \"$$(date -Iseconds)\",
           \"services\": {
@@ -111,6 +111,7 @@ services:
             \"gateway_health\": $$gateway_health
           }
         }"
-
+      
         sleep 30
-      done      
+      done
+      '      
