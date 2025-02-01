@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spring Framework Guru - Beer List</title>
+    <title>Beer List</title>
 
     <!-- Bootstrap CSS -->
     <!--
@@ -21,37 +21,33 @@
     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
-                <a class="page-link" th:href="@{/beers(pageNumber=${currentPage})}" tabindex="-1">Previous</a>
+                <a class="page-link" th:href="@{/beers(pageNumber=${currentPage})}" tabindex="-1" id="previousButton">Previous</a>
             </li>
 
-            <!-- First Page -->
             <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
-                <a class="page-link" th:href="@{/beers(pageNumber=0)}">First</a>
+                <a class="page-link" th:href="@{/beers(pageNumber=0)}" id="firstButton">First</a>
             </li>
 
-            <!-- Ellipsis if needed -->
             <li class="page-item disabled" th:if="${startPage > 1}">
                 <span class="page-link">...</span>
             </li>
 
-            <!-- Page numbers -->
             <li class="page-item" th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
                 th:classappend="${pageNum == currentPage} ? active">
-                <a class="page-link" th:href="@{/beers(pageNumber=${pageNum})}" th:text="${pageNum + 1}">1</a>
+                <a class="page-link" th:href="@{/beers(pageNumber=${pageNum})}" th:text="${pageNum + 1}"
+                   th:id="'pageButton' + ${pageNum + 1}">1</a>
             </li>
 
-            <!-- Ellipsis if needed -->
             <li class="page-item disabled" th:if="${endPage < totalPages - 2}">
                 <span class="page-link">...</span>
             </li>
 
-            <!-- Last Page -->
             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? active" th:if="${totalPages > 1 && endPage < totalPages - 1}">
-                <a class="page-link" th:href="@{/beers(pageNumber=${totalPages - 1})}" th:text="${totalPages}">Last</a>
+                <a class="page-link" th:href="@{/beers(pageNumber=${totalPages - 1})}" th:text="${totalPages}" id="lastButton">Last</a>
             </li>
 
             <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? disabled">
-                <a class="page-link" th:href="@{/beers(pageNumber=${currentPage + 2})}">Next</a>
+                <a class="page-link" th:href="@{/beers(pageNumber=${currentPage + 2})}" id="nextButton">Next</a>
             </li>
         </ul>
     </nav>

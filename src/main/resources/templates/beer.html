@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spring Framework Guru - Beer Details</title>
+    <title>Beer Details</title>
 
     <!-- Bootstrap CSS -->
     <!--<link href="webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -17,12 +17,12 @@
 
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title" th:text="${beer.beerName}">Beer Name</h5>
-            <h6 class="card-subtitle mb-2 text-muted" th:text="${beer.beerStyle}">Beer Style</h6>
-            <p class="card-text">ID: <span th:text="${beer.id}">123</span></p>
-            <p class="card-text">UPC: <span th:text="${beer.upc}">UPC</span></p>
-            <p class="card-text">Price: $<span th:text="${beer.price}">0.00</span></p>
-            <p class="card-text">Quantity On Hand: <span th:text="${beer.quantityOnHand}">0</span></p>
+            <h5 id="beerName" class="card-title" th:text="${beer.beerName}">Beer Name</h5>
+            <h6 id="beerStyle" class="card-subtitle mb-2 text-muted" th:text="${beer.beerStyle}">Beer Style</h6>
+            <p class="card-text">ID: <span id="beerId" th:text="${beer.id}">123</span></p>
+            <p class="card-text">UPC: <span id="beerUpc" th:text="${beer.upc}">UPC</span></p>
+            <p class="card-text">Price: $<span id="beerPrice" th:text="${beer.price}">0.00</span></p>
+            <p class="card-text">Quantity On Hand: <span id="beerQuantity" th:text="${beer.quantityOnHand}">0</span></p>
         </div>
     </div>
 
