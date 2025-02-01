@@ -1,15 +1,11 @@
 package guru.springframework.spring6resttemplate.test.util.docker;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6resttemplate.client.BeerClientImpl;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.ResponseEntity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,31 +29,4 @@ public class MvcServerTestUtil {
             });
         log.info("Database is fully initialized.");
     }
-
-    public static void checkMvcReady(TestRestTemplate restTemplate, ObjectMapper objectMapper, String mvcUrl) {
-        Awaitility.await()
-            .atMost(60, TimeUnit.SECONDS)
-            .pollInterval(1, TimeUnit.SECONDS)
-            .until(() -> {
-                try {
-                    ResponseEntity<String> response = restTemplate.getForEntity(
-                        mvcUrl + "/actuator/health/readiness",
-                        String.class
-                    );
-                    log.info("MVC Readiness check response: {}", response.getBody());
-
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                        JsonNode jsonNode = objectMapper.readTree(response.getBody());
-                        String status = jsonNode.path("status").asText();
-                        return "UP".equals(status);
-                    }
-                    return false;
-                } catch (Exception e) {
-                    log.warn("Error checking MVC readiness: ", e);
-                    return false;
-                }
-            });
-        log.info("MVC application is ready.");
-    }
-    
 }

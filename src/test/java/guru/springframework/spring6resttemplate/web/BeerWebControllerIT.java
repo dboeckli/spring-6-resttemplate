@@ -1,14 +1,11 @@
 package guru.springframework.spring6resttemplate.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6resttemplate.client.BeerClientImpl;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.ui.ExtendedModelMap;
@@ -17,7 +14,6 @@ import org.springframework.ui.Model;
 import java.util.List;
 
 import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcDatabaseInitDone;
-import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcReady;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,12 +27,7 @@ class BeerWebControllerIT {
     BeerWebController controller;
 
     @BeforeAll
-    static void setUp(@Autowired BeerClientImpl beerClient,
-                      @Autowired TestRestTemplate restTemplate,
-                      @Autowired ObjectMapper objectMapper,
-                      @Value("${rest.template.base.url}") String mvcUrl) {
-        
-        checkMvcReady(restTemplate, objectMapper, mvcUrl);
+    static void setUp(@Autowired BeerClientImpl beerClient) {
         checkMvcDatabaseInitDone(beerClient);
     }
 

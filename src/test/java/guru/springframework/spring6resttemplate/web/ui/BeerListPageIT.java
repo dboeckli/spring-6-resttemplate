@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,12 +51,14 @@ class BeerListPageIT {
     @Test
     void testBeerListPageLoads() {
         webDriver.get("http://localhost:" + port + "/beers");
+        waitForPageLoad();
         Assertions.assertEquals("Beer List", webDriver.getTitle());
     }
 
     @Test
      void testBeerListContainsItems() {
         webDriver.get("http://localhost:" + port + "/beers");
+        waitForPageLoad();
         List<WebElement> tableRows = webDriver.findElements(By.cssSelector("table tbody tr"));
         
         assertFalse(tableRows.isEmpty(), "Beer list should contain items");
@@ -64,6 +68,7 @@ class BeerListPageIT {
     @Test
     void testPaginationExists() {
         webDriver.get("http://localhost:" + port + "/beers");
+        waitForPageLoad();
         WebElement pagination = webDriver.findElement(By.cssSelector("nav[aria-label='Page navigation']"));
 
         assertNotNull(pagination, "Pagination should exist");
@@ -100,6 +105,7 @@ class BeerListPageIT {
     @Test
     void testViewButtonWorks() {
         webDriver.get("http://localhost:" + port + "/beers");
+        waitForPageLoad();
         WebElement firstViewButton = webDriver.findElement(By.cssSelector("table tbody tr:first-child .btn-primary"));
         String href = firstViewButton.getAttribute("href");
         
@@ -125,4 +131,10 @@ class BeerListPageIT {
                 "Displayed beer ID should match the expected ID")
         );
    }
+
+    private void waitForPageLoad() {
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
+        wait.until((ExpectedCondition<Boolean>) wd ->
+            Objects.equals(((JavascriptExecutor) wd).executeScript("return document.readyState"), "complete"));
+    }
 }
