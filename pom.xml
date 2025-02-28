@@ -40,7 +40,7 @@
 
         <spring-6-rest-mvc.version>0.0.2</spring-6-rest-mvc.version>
 
-        <logbook.version>3.10.0</logbook.version>
+        <logbook.version>3.11.0</logbook.version>
         <logstash-logback.version>8.0</logstash-logback.version>
 
         <webjars-bootstrap.version>5.3.3</webjars-bootstrap.version>
