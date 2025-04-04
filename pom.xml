@@ -56,7 +56,7 @@
         <openapi-jackson-databind-nullable.version>0.2.6</openapi-jackson-databind-nullable.version>
 
         <!-- Sonar -->
-        <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
+        <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.language>java</sonar.language>
