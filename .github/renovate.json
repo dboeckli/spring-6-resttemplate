@@ -5,8 +5,19 @@
     "config:recommended"
   ],
   "enabledManagers": [
-    "docker-compose"
+    "docker-compose",
+    "maven-wrapper"
   ],
+
+  "maven-wrapper": {
+    "fileMatch": [
+      "(^|/)mvnw$",
+      "(^|/)mvnw.cmd$",
+      "(^|/).mvn/wrapper/maven-wrapper.properties$"
+    ],
+    "versioning": "maven"
+  },
+  
   "docker-compose": {
     "enabled": true
   },
