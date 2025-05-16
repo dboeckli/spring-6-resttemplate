@@ -29,7 +29,7 @@ logbook:
       - password
   predicate:
     exclude:
-      - # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
+      # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
       - path: /actuator/health/**
       - path: /h2-console/**  # Exclude H2 console
       - path: /swagger-ui/**  # Exclude Swagger UI if used
