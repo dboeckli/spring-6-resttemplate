@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spring-6-resttemplate-mysql.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "spring-6-resttemplate-mysql.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "spring-6-resttemplate-mysql.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        {{- include "spring-6-resttemplate-mysql.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.4.5
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.database }}
+            - name: MYSQL_LOG_CONSOLE
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: {{ include "spring-6-resttemplate-mysql.fullname" . }}-secrets
+          args:
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+          ports:
+            - name: mysql
+              containerPort: {{ .Values.mysql.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-init-script
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.mysql.port }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.mysql.port }}
+      volumes:
+        - name: mysql-data
+          emptyDir: { }
+        - name: mysql-init-script
+          configMap:
+            name: {{ include "spring-6-resttemplate-mysql.fullname" . }}-mysql-init

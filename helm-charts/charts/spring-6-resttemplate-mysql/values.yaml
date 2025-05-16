@@ -1,0 +1,14 @@
+global:
+  namespace: spring-6-resttemplate
+
+mysql:
+  port: 3306
+  targetPort: 3306
+  nodePort: 30306
+  
+  database: "restmvcdb"
+
+  user: restadmin
+  password: password
+
+  rootPassword: verysecret
