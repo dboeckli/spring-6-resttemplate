@@ -35,6 +35,8 @@ logbook:
       - path: /favicon.ico
       - path: /beers
       - path: /beers/**
+      - path: /beer
+      - path: /beer/**
       # Add more exclusions as needed
 
 spring:
