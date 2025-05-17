@@ -35,14 +35,14 @@ class BeerListPageIT {
     private WebDriver webDriver;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");  // Run in headless mode
         webDriver = new ChromeDriver(options);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (webDriver != null) {
             webDriver.quit();
         }

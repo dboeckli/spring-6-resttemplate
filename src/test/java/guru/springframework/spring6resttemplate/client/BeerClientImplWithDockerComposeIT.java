@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcDatabaseInitDone;
@@ -32,11 +31,6 @@ class BeerClientImplWithDockerComposeIT {
 
     @Autowired
     private BeerClientImpl beerClient;
-
-    @BeforeEach
-    void setUp() {
-        Locale.setDefault(Locale.US);
-    }
 
     @BeforeAll
     static void setUp(@Autowired BeerClientImpl beerClient) {

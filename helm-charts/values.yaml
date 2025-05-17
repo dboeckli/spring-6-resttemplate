@@ -1,0 +1,63 @@
+global:
+  timezone: Europe/Zurich
+  timezonePath: /etc/localtime
+  springDebug: false
+  namespace: spring-6-resttemplate
+
+replicaCount: 1
+
+image:
+  repository: @docker.repo@/@project.artifactId@
+  tag: @project.version@
+
+service:
+  type: NodePort
+  port: 8086
+  targetPort: 8086
+  nodePort: 30086
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+probes:
+  startup:
+    failureThreshold: 30
+    periodSeconds: 10
+  readiness:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  liveness:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+mysql:
+  database: restmvcdb
+
+  port: 3306
+  targetPort: 3306
+  nodePort: 30306
+
+  user: restadmin
+  password: password
+
+  rootPassword: verysecret
+
+authServer:
+  port: 9000
+  targetPort: 9000
+  nodePort: 30900
+
+spring-6-auth-server:
+  spring:
+    issuer:
+      uri: "http://spring-6-resttemplate-spring-6-auth-server.spring-6-resttemplate.svc.cluster.local:9000"
+
+ingress:
+  enabled: false

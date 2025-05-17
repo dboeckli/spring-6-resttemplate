@@ -1,17 +1,17 @@
 ###
-GET http://localhost:8081/api/v1/beer/listBeers
+GET http://localhost:{{rest-mvc-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-GET http://localhost:8081/api/v1/beer/getBeerById/5bdbb1e6-dfc9-4829-8e0a-4edc74ffc07e
+GET http://localhost:{{rest-mvc-port}}/api/v1/beer/getBeerById/5bdbb1e6-dfc9-4829-8e0a-4edc74ffc07e
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-POST http://localhost:8081/api/v1/beer/createBeer
+POST http://localhost:{{rest-mvc-port}}/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -26,7 +26,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:{{rest-mvc-port}}/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -41,7 +41,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+PATCH http://localhost:{{rest-mvc-port}}/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -51,7 +51,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+DELETE http://localhost:{{rest-mvc-port}}/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}

@@ -1,17 +1,17 @@
 ###
-GET http://localhost:8081/api/v1/customer/listCustomer
+GET http://localhost:{{rest-mvc-port}}/api/v1/customer/listCustomer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-GET http://localhost:8081/api/v1/customer/getCustomerById/a8a783fd-c4f1-4126-8fca-0e148c43759f
+GET http://localhost:{{rest-mvc-port}}/api/v1/customer/getCustomerById/a8a783fd-c4f1-4126-8fca-0e148c43759f
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-POST http://localhost:8081/api/v1/customer/createCustomer
+POST http://localhost:{{rest-mvc-port}}/api/v1/customer/createCustomer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -22,7 +22,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PUT http://localhost:8081/api/v1/customer/editCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:{{rest-mvc-port}}/api/v1/customer/editCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -33,7 +33,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PUT http://localhost:8081/api/v1/customer/patchCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:{{rest-mvc-port}}/api/v1/customer/patchCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -43,7 +43,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-DELETE http://localhost:8081/api/v1/customer/deleteCustomer/9b6f18b9-f521-4400-8699-7e66ae2261ba
+DELETE http://localhost:{{rest-mvc-port}}/api/v1/customer/deleteCustomer/9b6f18b9-f521-4400-8699-7e66ae2261ba
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
