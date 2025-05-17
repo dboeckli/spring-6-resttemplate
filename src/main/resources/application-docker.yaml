@@ -39,6 +39,7 @@ logbook:
       - path: /beers/**
       - path: /beer
       - path: /beer/**
+      - path: /webjars/**
       # Add more exclusions as needed
 
 spring:
