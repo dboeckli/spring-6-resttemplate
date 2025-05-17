@@ -10,29 +10,28 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
-// TODO: SET ME UP
 public class RestMvcHealthIndicator implements HealthIndicator {
 
     private final RestTemplate restTemplate;
-    private final String authServerUrl;
+    private final String restMvcUrl;
 
-    public RestMvcHealthIndicator(@Value("${security.auth-server-health-url}") String authServerUrl) {
+    public RestMvcHealthIndicator(@Value("${rest.template.base.url}") String restMvcUrl) {
         this.restTemplate = new RestTemplateBuilder().build();
-        this.authServerUrl = authServerUrl;
+        this.restMvcUrl = restMvcUrl;
     }
 
     @Override
     public Health health() {
         try {
-            String response = restTemplate.getForObject(authServerUrl + "/actuator/health", String.class);
+            String response = restTemplate.getForObject(restMvcUrl + "/actuator/health", String.class);
             if (response != null && response.contains("\"status\":\"UP\"")) {
                 return Health.up().build();
             } else {
-                log.warn("Auth server is not reporting UP status at {}", authServerUrl);
+                log.warn("Auth server is not reporting UP status at {}", restMvcUrl);
                 return Health.down().build();
             }
         } catch (Exception e) {
-            log.warn("Auth server is not reachable at {}", authServerUrl, e);
+            log.warn("Auth server is not reachable at {}", restMvcUrl, e);
             return Health.down(e).build();
         }
     }
