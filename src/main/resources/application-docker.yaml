@@ -29,7 +29,18 @@ logbook:
       - password
   predicate:
     exclude:
-      - path: /actuator/health
+      # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
+      - path: /actuator/health/**
+      - path: /h2-console/**  # Exclude H2 console
+      - path: /swagger-ui/**  # Exclude Swagger UI if used
+      - path: /v3/api-docs/** # Exclude OpenAPI docs if used
+      - path: /favicon.ico
+      - path: /beers
+      - path: /beers/**
+      - path: /beer
+      - path: /beer/**
+      - path: /webjars/**
+      # Add more exclusions as needed
 
 spring:
   application:
@@ -56,7 +67,7 @@ spring:
             provider: springauth
         provider:
           springauth:
-            authorization-uri: "http://localhost:9000/auth2/authorize"
+            authorization-uri: "http://localhost:9000/oauth2/authorize"
             token-uri: "http://localhost:9000/oauth2/token"
             
 management:
@@ -73,4 +84,7 @@ management:
     health:
       probes:
         enabled: true
-      show-details: always              
+      show-details: always
+
+security:
+  auth-server-health-url: http://localhost:9000

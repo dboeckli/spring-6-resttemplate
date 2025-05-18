@@ -1,3 +1,6 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
 # make sure that the line endings are in linux format.
 * text eol=lf
 # Denote all files that are truly binary and should not be modified.

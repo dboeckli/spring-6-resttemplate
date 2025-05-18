@@ -29,21 +29,26 @@
 
     <properties>
         <java.version>21</java.version>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <github.acions.build>false</github.acions.build>
         <skip.docker.publish>true</skip.docker.publish>
         <skip.start.stop.springboot>false</skip.start.stop.springboot>
         <skip.docker.build>false</skip.docker.build>
 
+        <docker.image.tag>development</docker.image.tag> <!-- for feature branches -->
+        <docker.repo>local</docker.repo>
+
         <spring-6-rest-mvc.version>0.0.2</spring-6-rest-mvc.version>
 
         <logbook.version>3.12.0</logbook.version>
         <logstash-logback.version>8.1</logstash-logback.version>
         <editorconfig-maven-plugin.version>0.1.3</editorconfig-maven-plugin.version>
+        <helm.plugin.version>6.17.0</helm.plugin.version>
+        <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
+        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
 
         <webjars-bootstrap.version>5.3.5</webjars-bootstrap.version>
         <webjars-locator.version>0.52</webjars-locator.version>
@@ -62,6 +67,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.language>java</sonar.language>
+        <sonar.scm.provider>git</sonar.scm.provider>
         <jacoco.version>0.8.13</jacoco.version>
 
         <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
@@ -101,6 +107,32 @@
             <properties>
                 <github.acions.build>true</github.acions.build>
                 <skip.docker.publish>false</skip.docker.publish>
+                <docker.repo>domboeckli</docker.repo>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>main-branch</id>
+            <activation>
+                <property>
+                    <name>env.GITHUB_REF</name>
+                    <value>refs/heads/main</value>
+                </property>
+            </activation>
+            <properties>
+                <docker.image.tag>latest</docker.image.tag>
+            </properties>
+        </profile>
+        <profile>
+            <id>master-branch</id>
+            <activation>
+                <property>
+                    <name>env.GITHUB_REF</name>
+                    <value>refs/heads/master</value>
+                </property>
+            </activation>
+            <properties>
+                <docker.image.tag>latest</docker.image.tag>
             </properties>
         </profile>
     </profiles>
@@ -315,6 +347,7 @@
                         <!-- You can exclude further files from processing: -->
                         <exclude>**/toolchains.xml</exclude>
                         <exclude>**/settings.xml</exclude>
+                        <exclude>**/db/changelog/*.xml</exclude>
                         <exclude>.run/**</exclude>
                         <exclude>.mvn/**</exclude>
                         <exclude>.idea/**</exclude>
@@ -389,6 +422,110 @@
                     <runOnlyOnce>true</runOnlyOnce>
                     <skipPoms>false</skipPoms>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-helm-version</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <propertyfile file="${project.build.directory}/helm.properties">
+                                    <entry key="helm.chart.version" value="v${project.version}" />
+                                </propertyfile>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <replaceregexp file="${project.build.directory}/helm.properties"
+                                               match="helm\.chart\.version=(v[0-9]+\.[0-9]+\.[0-9]+)_.*-SNAPSHOT"
+                                               replace="helm.chart.version=\1-${git.commit.id.abbrev}"
+                                               byline="true" />
+                                <property file="${project.build.directory}/helm.properties" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>${properties-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <id>read-helm-properties</id>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.build.directory}/helm.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+
+                    <execution>
+                        <id>copy-and-filter-k8s-yaml-to-target</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/k8s</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>k8s</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <!--
+                        This execution copies helm charts and puts them into the target directory 'helm-charts'. The helm charts are used to deploy the project.
+                        During the build some variables are resolved by maven filtering (e.g. the project version).
+                    -->
+                    <execution>
+                        <id>copy-and-filter-helm-charts-to-target</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/helm-charts</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>helm-charts</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <filters>
+                                <filter>${project.build.directory}/helm.properties</filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+
+                </executions>
             </plugin>
             
             <!-- we need a port to be able to start the local profile -->
@@ -594,7 +731,6 @@
                             <goal>start</goal>
                             <goal>stop</goal>
                         </goals>
-                        <phase>post-integration-test</phase>
                         <configuration>
                             <skip>${skip.start.stop.springboot}</skip>
                             <wait>1000</wait> <!-- 1000 milliseconds is default -->
@@ -618,9 +754,9 @@
                         <configuration>
                             <skip>${skip.docker.build}</skip>
                             <image>
-                                <name>local/${project.artifactId}:latest</name>
+                                <name>local/${project.artifactId}:${project.version}</name>
                                 <tags>
-                                    local/${project.artifactId}:${project.version}
+                                    local/${project.artifactId}:${docker.image.tag}
                                 </tags>
                                 <publish>false</publish>
                             </image>
@@ -636,9 +772,9 @@
                         <configuration>
                             <skip>${skip.docker.publish}</skip>
                             <image>
-                                <name>ghcr.io/${project.organization.name}/${project.artifactId}:latest</name>
+                                <name>ghcr.io/${project.organization.name}/${project.artifactId}:${project.version}</name>
                                 <tags>
-                                    ghcr.io/${project.organization.name}/${project.artifactId}:${project.version}
+                                    ghcr.io/${project.organization.name}/${project.artifactId}:${docker.image.tag}
                                 </tags>
                                 <publish>true</publish>
                             </image>
@@ -665,10 +801,10 @@
                             <skip>${skip.docker.publish}</skip>
                             <image>
                                 <!--suppress UnresolvedMavenProperty -->
-                                <name>${env.DOCKER_USER}/${project.artifactId}:latest</name>
+                                <name>${env.DOCKER_USER}/${project.artifactId}:${project.version}</name>
                                 <tags>
                                     <!--suppress UnresolvedMavenProperty -->
-                                    ${env.DOCKER_USER}/${project.artifactId}:${project.version}
+                                    ${env.DOCKER_USER}/${project.artifactId}:${docker.image.tag}
                                 </tags>
                                 <publish>true</publish>
                             </image>
@@ -682,6 +818,99 @@
                                     <url>https://index.docker.io/v1/</url>
                                 </publishRegistry>
                             </docker>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>io.kokuwa.maven</groupId>
+                <artifactId>helm-maven-plugin</artifactId>
+                <version>${helm.plugin.version}</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <chartDirectory>${project.build.directory}/helm-charts/</chartDirectory>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <chartVersion>${helm.chart.version}</chartVersion>
+                    <skipLint>true</skipLint>
+                    <useLocalHelmBinary>true</useLocalHelmBinary>
+                    <skip>false</skip>
+                    <templateOutputDir>${project.build.directory}/helm-templated</templateOutputDir>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>execute-helm-dependencies</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>dependency-build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>execute-helm-lint</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>lint</goal> <!-- Locally render templates -->
+                        </goals>
+                        <configuration>
+                            <skipLint>false</skipLint>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>execute-helm-template</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>template</goal> <!-- Locally render templates -->
+                        </goals>
+                        <configuration>
+                            <skipTemplate>false</skipTemplate>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>execute-helm-dry-run</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>dry-run</goal> <!-- simulates an install. output goes to target/helm-templated -->
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>helm-package</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>package</goal> <!-- creates tgz file to target/helm -->
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>helm-login</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>registry-login</goal>
+                        </goals>
+                        <configuration>
+                            <uploadRepoStable>
+                                <name>stable-repo</name>
+                                <url>registry-1.docker.io</url>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <username>${env.DOCKER_USER}</username>  <!-- registry username -->
+                                <!--suppress UnresolvedMavenProperty -->
+                                <password>${env.DOCKER_TOKEN}</password> <!-- registry password or identity token -->
+                            </uploadRepoStable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>helm-push</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <skipPushLogin>true</skipPushLogin>
+                            <uploadRepoStable>
+                                <name>stable-repo</name>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <url>registry-1.docker.io/${env.DOCKER_USER}</url>
+                            </uploadRepoStable>
                         </configuration>
                     </execution>
                 </executions>
