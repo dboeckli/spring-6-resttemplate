@@ -4,10 +4,10 @@
 
 This project acts as a client to the spring-6-resttemplate which runs on port 8086.
 Required other modules up and running:
-- this application runs on port 8086 
-- authentication server on port 9000
-- mvc module running on port 8081
-- gateway module running on port 8080
+- this application runs on port 8086/30086 
+- authentication server on port 9000/30900
+- mvc module running on port 8081/30081
+- gateway module running on port 8080/30080
 
 ## Web Interface
 
@@ -20,6 +20,10 @@ This application includes a web interface that allows users to interact with the
 To access the web interface, start the application and navigate to: 
 - http://localhost:8086/beers
 - http://localhost:30086/beers
+
+To access the openapi ui from the mvc server:
+- http://localhost:8081/swagger-ui/index.html
+- http://localhost:30081/swagger-ui/index.html
 
 ## Overview
 All components are started automatically with the help of docker-compose.
@@ -73,6 +77,11 @@ When updating 'src/scripts/init-mysql-mysql.sql', apply the changes to the Kuber
 kubectl create configmap mysql-init-script --from-file=init.sql=src/scripts/init-mysql.sql --dry-run=client -o yaml | Out-File -Encoding utf8 k8s/mysql-init-script-configmap.yaml
 ```
 
+To run maven filtering for destination target/k8s and target target/helm run:
+```bash
+mvn clean install -DskipTests 
+```
+
 ### Deployment with Kubernetes
 
 Deployment goes into the default namespace.
@@ -93,7 +102,7 @@ kubectl get deployments -o wide
 kubectl get pods -o wide
 ```
 
-You can use the actuator rest call to verify via port 30081
+You can use the actuator rest call to verify via port 30086
 
 ### Deployment with Helm
 
@@ -142,4 +151,4 @@ uninstall
 helm uninstall $APPLICATION_NAME --namespace spring-6-resttemplate
 ```
 
-You can use the actuator rest call to verify via port 30083
+You can use the actuator rest call to verify via port 30086

@@ -14,3 +14,7 @@ Content-Type: application/x-www-form-urlencoded
 ### actuator
 GET http://localhost:{{auth-server-prt}}/actuator/info
 Accept: application/json
+
+### actuator health
+GET http://localhost:{{auth-server-prt}}/actuator/health
+Accept: application/json
