@@ -16,6 +16,10 @@ service:
   targetPort: 8086
   nodePort: 30086
 
+externalAccess:
+  host: "localhost"
+  protocol: "http"
+
 resources:
   limits:
     cpu: 500m
@@ -59,10 +63,21 @@ restMvc:
   targetPort: 8081
   nodePort: 30081
 
+ingress:
+  enabled: false
+
+# Section for overriding values in subcharts defined in the Chart.yaml
+
 spring-6-auth-server:
   spring:
     issuer:
       uri: "http://spring-6-resttemplate-spring-6-auth-server.spring-6-resttemplate.svc.cluster.local:9000"
 
-ingress:
-  enabled: false
+spring-6-rest-mvc:
+  authServer:
+    enabled: false
+  mysql:
+    enabled: false
+  spring:
+    oauth2ResourceServer:
+      issuerUri: "http://spring-6-resttemplate-spring-6-auth-server.spring-6-resttemplate.svc.cluster.local:9000"

@@ -78,6 +78,11 @@ management:
       exposure:
         include: "*"
   endpoint:
+    configprops:
+      # WARNING: SECURITY RISK - DO NOT USE IN PRODUCTION ENVIRONMENT
+      # This configuration exposes sensitive data and should only be used for development or testing purposes.
+      # Ensure this is disabled in any environment where security is a concern.
+      show-values: ALWAYS
     health:
       probes:
         enabled: true
