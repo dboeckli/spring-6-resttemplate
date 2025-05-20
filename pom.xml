@@ -70,7 +70,6 @@
         <sonar.scm.provider>git</sonar.scm.provider>
         <jacoco.version>0.8.13</jacoco.version>
 
-        <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
         <!--suppress UnresolvedMavenProperty -->
         <buildNumber>${git.commit.id.abbrev}</buildNumber>
     </properties>
