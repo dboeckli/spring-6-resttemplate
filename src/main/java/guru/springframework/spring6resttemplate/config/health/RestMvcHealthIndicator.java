@@ -27,11 +27,11 @@ public class RestMvcHealthIndicator implements HealthIndicator {
             if (response != null && response.contains("\"status\":\"UP\"")) {
                 return Health.up().build();
             } else {
-                log.warn("Auth server is not reporting UP status at {}", restMvcUrl);
+                log.warn("MVC server is not reporting UP status at {}", restMvcUrl);
                 return Health.down().build();
             }
         } catch (Exception e) {
-            log.warn("Auth server is not reachable at {}", restMvcUrl, e);
+            log.warn("MVC server is not reachable at {}", restMvcUrl, e);
             return Health.down(e).build();
         }
     }
