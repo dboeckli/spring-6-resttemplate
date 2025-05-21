@@ -1,11 +1,3 @@
-rest:
-  template:
-    base:
-      # restmvc url
-      url: "http://localhost:8081"
-    user: "master"
-    password: "password"
-    
 server:
   port: 8086    
   
@@ -90,3 +82,11 @@ management:
 
 security:
   auth-server-health-url: http://localhost:9000
+
+rest:
+  template:
+    base:
+      # restmvc url
+      url: "http://localhost:8081"
+    user: "master"
+    password: "password"
