@@ -29,13 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 class BeerClientImplWithTestContainerIT {
 
+    private static final String MYSQL_VERSION = "8.4.5";
+    private static final String AUTH_SERVER_VERSION = "0.0.4-SNAPSHOT";
+    private static final String REST_MVC_VERSION = "0.0.1";
+
+    private static final String IMAGE_REPOSITORY = "domboeckli";
+
     static final int REST_MVC_PORT = TestSocketUtils.findAvailableTcpPort();
     static final int AUTH_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
 
     static final Network sharedNetwork = Network.newNetwork();
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.4")
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:" + MYSQL_VERSION)
             .withNetworkAliases("mysql")
             .withNetwork(sharedNetwork)
             .withEnv("MYSQL_DATABASE", "restdb")
@@ -50,7 +56,7 @@ class BeerClientImplWithTestContainerIT {
             .waitingFor(Wait.forSuccessfulCommand("mysqladmin ping -h localhost -uroot -ppassword"));
 
     @Container
-    static GenericContainer<?> authServer = new GenericContainer<>("domboeckli/spring-6-auth-server:0.0.1-SNAPSHOT")
+    static GenericContainer<?> authServer = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-auth-server:" + AUTH_SERVER_VERSION)
             .withNetworkAliases("auth-server")
             .withNetwork(sharedNetwork)
             .withEnv("SERVER_PORT", String.valueOf(AUTH_SERVER_PORT))
@@ -65,7 +71,7 @@ class BeerClientImplWithTestContainerIT {
             );
 
     @Container
-    static GenericContainer<?> restMvc = new GenericContainer<>("domboeckli/spring-6-rest-mvc:0.0.1")
+    static GenericContainer<?> restMvc = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-rest-mvc:" + REST_MVC_VERSION)
             .withExposedPorts(REST_MVC_PORT)
             .withNetwork(sharedNetwork)
             .withEnv("SPRING_PROFILES_ACTIVE", "localmysql")
