@@ -68,6 +68,7 @@ services:
       SECURITY_TOKEN_URL_FOR_OPENAPI: https://localhost:9000/oauth2/token
       SECURITY_REFRESH_URL_FOR_OPENAPI: https://localhost:9000/oauth2/refresh-token
 
+      # more routes are needed here: actuator and openapi. See Gateway Project
       SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_ID: mvc_route
       SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_URI: http://rest-mvc:8081
       SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_PREDICATES[0]: Path=/api/v1/**
