@@ -10,12 +10,24 @@ Accept: application/json
 GET http://localhost:{{rest-mvc-port}}/actuator/info
 Accept: application/json
 
+### actuator info for gateway. does only run when started with docker compose
+GET http://localhost:{{gateway-port}}/actuator/info
+Accept: application/json
+
 ### actuator health
 GET http://localhost:{{application-port}}/actuator/health
 Accept: application/json
 
-### actuator health
+### mvc actuator health
 GET http://localhost:{{rest-mvc-port}}/actuator/health
+Accept: application/json
+
+### gateway actuator health
+GET http://localhost:{{gateway-port}}/actuator/health
+Accept: application/json
+
+### auth server actuator health
+GET http://localhost:{{auth-server-prt}}/actuator/health
 Accept: application/json
 
 ### actuator health readiness

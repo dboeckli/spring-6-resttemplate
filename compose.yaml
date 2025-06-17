@@ -35,6 +35,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: mysql
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://auth-server:9000
+      SECURITY_AUTH_SERVER_HEALTH_URL: http://auth-server:9000
       SERVER_PORT: 8081
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/restmvcdb
       LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS_NETWORKCLIENT: ERROR
@@ -67,13 +68,13 @@ services:
       SECURITY_TOKEN_URL_FOR_OPENAPI: https://localhost:9000/oauth2/token
       SECURITY_REFRESH_URL_FOR_OPENAPI: https://localhost:9000/oauth2/refresh-token
 
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: mvc_route
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://rest-mvc:8081
-      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/v1/**
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_ID: mvc_route
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_URI: http://rest-mvc:8081
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[0]_PREDICATES[0]: Path=/api/v1/**
 
-      SPRING_CLOUD_GATEWAY_ROUTES[1]_ID: auth_route
-      SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://auth-server:9000
-      SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]: Path=/oauth2/**
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[1]_ID: auth_route
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[1]_URI: http://auth-server:9000
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES[1]_PREDICATES[0]: Path=/oauth2/**
     depends_on:
       auth-server:
         condition: service_started

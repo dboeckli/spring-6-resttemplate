@@ -15,6 +15,8 @@ public class RestMvcHealthIndicator implements HealthIndicator {
     private final RestTemplate restTemplate;
     private final String restMvcUrl;
 
+    private boolean wasDownLastCheck = true;
+
     public RestMvcHealthIndicator(@Value("${rest.template.base.url}") String restMvcUrl) {
         this.restTemplate = new RestTemplateBuilder().build();
         this.restMvcUrl = restMvcUrl;
@@ -25,13 +27,19 @@ public class RestMvcHealthIndicator implements HealthIndicator {
         try {
             String response = restTemplate.getForObject(restMvcUrl + "/actuator/health", String.class);
             if (response != null && response.contains("\"status\":\"UP\"")) {
+                if (wasDownLastCheck) {
+                    log.info("MVC server is ready again under {}", restMvcUrl);
+                }
+                wasDownLastCheck = false;
                 return Health.up().build();
             } else {
                 log.warn("MVC server is not reporting UP status at {}", restMvcUrl);
+                wasDownLastCheck = true;
                 return Health.down().build();
             }
         } catch (Exception e) {
             log.warn("MVC server is not reachable at {}", restMvcUrl, e);
+            wasDownLastCheck = true;
             return Health.down(e).build();
         }
     }
