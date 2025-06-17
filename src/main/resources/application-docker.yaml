@@ -29,7 +29,22 @@ logbook:
       - path: /beers/**
       - path: /beer
       - path: /beer/**
-      - path: /webjars/**
+      # Exclude HTML-related calls and web resources
+      - path: /**/*.html
+      - path: /**/*.css
+      - path: /**/*.js
+      - path: /**/*.png
+      - path: /**/*.jpg
+      - path: /**/*.jpeg
+      - path: /**/*.gif
+      - path: /**/*.ico
+      - path: /**/favicon.ico
+      - path: /**/webjars/**
+      # Exclude other common web resources
+      - path: /**/assets/**
+      - path: /**/static/**
+      - path: /**/public/**
+      - path: /**/resources/**
       # Add more exclusions as needed
 
 spring:
@@ -87,9 +102,9 @@ security:
 rest:
   template:
     base:
-      # restmvc url
-      #url: "http://localhost:8081"
+      url: "http://localhost:8081" #restmvc url
+      # missing routes for actuator
       # gateway url
-      url: http://localhost:8080
+      #url: http://localhost:8080/api/v1
     user: "master"
     password: "password"
