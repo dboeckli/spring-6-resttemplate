@@ -50,7 +50,7 @@
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
 
-        <webjars-bootstrap.version>5.3.6</webjars-bootstrap.version>
+        <webjars-bootstrap.version>5.3.7</webjars-bootstrap.version>
         <webjars-locator.version>0.52</webjars-locator.version>
         <!-- 
         this is only for local development, when opening the html file in the browser.
