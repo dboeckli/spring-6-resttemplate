@@ -73,8 +73,8 @@ jobs:
         env:
           APPLICATION_NAME: ${{ inputs.application-name }}
         run: |
-          if ! kubectl wait --for=condition=ready pod -l app=$APPLICATION_NAME --timeout=180s; then
-            echo "Pod did not become ready within 180 seconds. Displaying logs:"
+          if ! kubectl wait --for=condition=ready pod -l app=$APPLICATION_NAME --timeout=240s; then
+            echo "Pod did not become ready within 240 seconds. Displaying logs:"
             kubectl get pods -l app=$APPLICATION_NAME
             POD_NAME=$(kubectl get pods -l app=$APPLICATION_NAME -o jsonpath="{.items[0].metadata.name}")
             kubectl logs $POD_NAME
@@ -165,7 +165,7 @@ jobs:
           NAMESPACE: ${{ inputs.namespace }}
           APPLICATION_NAME: ${{ inputs.application-name }}
         run: |
-          if ! kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=$APPLICATION_NAME -n $NAMESPACE --timeout=180s; then
+          if ! kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=$APPLICATION_NAME -n $NAMESPACE --timeout=240s; then
             POD_NAME=$(kubectl get pods -l app.kubernetes.io/name=$APPLICATION_NAME -o jsonpath="{.items[0].metadata.name}" -n $NAMESPACE)
             kubectl logs $POD_NAME -n $NAMESPACE
             echo "Describing the pod:"
