@@ -38,8 +38,8 @@ public class BeerClientImpl implements BeerClient {
                                    Boolean showInventory,
                                    Integer pageNumber,
                                    Integer pageSize) {
+        log.info("### ListBeer: beerName: {}, beerStyle: {}, showInventory: {}, pageNumber: {}, pageSize: {}", beerName, beerStyle, showInventory, pageNumber, pageSize);
         RestTemplate restTemplate = restTemplateBuilder.build();
-
         UriComponentsBuilder uriComponentsBuilder = getQueryForListBeer(beerName, beerStyle, showInventory, pageNumber, pageSize);
 
         //ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), String.class);
@@ -60,12 +60,14 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public BeerDTO getBeerById(UUID beerId) {
+        log.info("### GetBeerById: beerId: {}", beerId);
         RestTemplate restTemplate = restTemplateBuilder.build();
         return restTemplate.getForObject(GET_BEER_BY_ID_PATH, BeerDTO.class, beerId);
     }
 
     @Override
     public BeerDTO createBeer(BeerDTO newBeer) {
+        log.info("### CreateBeer: newBeer: {}", newBeer);
         RestTemplate restTemplate = restTemplateBuilder.build();
         //ResponseEntity<BeerDTO> response = restTemplate.postForEntity(POST_CREATE_BEER_PATH, newBeer, BeerDTO.class);
         //return response.getBody();
@@ -80,6 +82,7 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public BeerDTO updateBeer(BeerDTO beerDTO) {
+        log.info("### UpdateBeer: beerDTO: {}", beerDTO);
         RestTemplate restTemplate = restTemplateBuilder.build();
         restTemplate.put(PUT_UPDATE_BEER_PATH, beerDTO, beerDTO.getId());
         return this.getBeerById(beerDTO.getId());
@@ -87,6 +90,7 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public void deleteBeer(UUID id) {
+        log.info("### DeleteBeer: id: {}", id);
         RestTemplate restTemplate = restTemplateBuilder.build();
         restTemplate.delete(DELETE_BEER_BY_ID_PATH, id);
     }

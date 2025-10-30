@@ -4,17 +4,42 @@
     <appender name="jsonConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"app_name":"${application_name}"}</customFields>
+            <fieldNames>
+                <timestamp>@timestamp</timestamp>
+                <level>level</level>
+                <logger>logger_name</logger>
+                <thread>thread_name</thread>
+                <message>message</message>
+            </fieldNames>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <includeMdcKeyName>trace_id</includeMdcKeyName>
+            <includeMdcKeyName>span_id</includeMdcKeyName>
         </encoder>
     </appender>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level ${application_name} %logger - %msg %n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level ${application_name} %logger - [%X{trace_id}-%X{span_id}] %msg%n</pattern>
         </encoder>
+    </appender>
+
+    <!-- OpenTelemetry appender configuration -->
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+        <captureExperimentalAttributes>true</captureExperimentalAttributes>
+        <captureCodeAttributes>true</captureCodeAttributes>
+        <captureMarkerAttribute>true</captureMarkerAttribute>
+        <captureKeyValuePairAttributes>true</captureKeyValuePairAttributes>
+        <captureLoggerContext>true</captureLoggerContext>
+        <captureMdcAttributes>
+            <pattern>.*</pattern>
+        </captureMdcAttributes>
     </appender>
 
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
+        <appender-ref ref="OTEL" />
     </root>
 
     <!-- Specific Logger for org.zalando.logbook.Logbook -->

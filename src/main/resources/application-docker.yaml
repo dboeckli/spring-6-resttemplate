@@ -108,3 +108,13 @@ rest:
       #url: http://localhost:8080/api/v1
     user: "master"
     password: "password"
+
+otel:
+  traces:
+    exporter: none
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
+  service:
+    name: ${spring.application.name}
