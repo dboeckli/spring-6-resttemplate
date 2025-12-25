@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.test.MockServerRestTemplateCustomizer;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.MockServerRestTemplateCustomizer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -161,7 +161,7 @@ class BeerClientImplMockedTest {
     void testListBeersWithQueryParam() throws JsonProcessingException {
         String response = objectMapper.writeValueAsString(getPage());
 
-        URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH)
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH)
             .queryParam("beerName", "ALE")
             .build().toUri();
 

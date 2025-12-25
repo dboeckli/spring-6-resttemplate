@@ -41,9 +41,8 @@
         <docker.image.tag>development</docker.image.tag> <!-- for feature branches -->
         <docker.repo>local</docker.repo>
 
-        <spring-6-rest-mvc.version>0.0.2</spring-6-rest-mvc.version>
+        <spring-6-rest-mvc.version>0.0.4-SNAPSHOT</spring-6-rest-mvc.version>
 
-        <logbook.version>3.12.3</logbook.version>
         <logstash-logback.version>9.0</logstash-logback.version>
         <editorconfig-maven-plugin.version>0.1.3</editorconfig-maven-plugin.version>
         <helm.plugin.version>6.17.0</helm.plugin.version>
@@ -60,7 +59,7 @@
         <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir>
 
         <!-- openapi -->
-        <openapi-generator-maven-plugin.version>7.17.0</openapi-generator-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>7.18.0</openapi-generator-maven-plugin.version>
         <openapi-jackson-databind-nullable.version>0.2.8</openapi-jackson-databind-nullable.version>
 
         <!-- Sonar -->
@@ -70,9 +69,6 @@
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
         <jacoco.version>0.8.14</jacoco.version>
-
-        <!--suppress UnresolvedMavenProperty -->
-        <buildNumber>${git.commit.id.abbrev}</buildNumber>
     </properties>
 
     <repositories>
@@ -168,7 +164,15 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -182,6 +186,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-micrometer-metrics</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
@@ -199,16 +219,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>logbook-spring-boot-starter</artifactId>
-            <version>${logbook.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.zalando</groupId>
-            <artifactId>logbook-logstash</artifactId>
-            <version>${logbook.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback.version}</version>
@@ -219,6 +229,20 @@
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>${openapi-jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.41</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>2.2.41</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
         <!-- webjars -->
@@ -232,15 +256,33 @@
             <artifactId>bootstrap</artifactId>
             <version>${webjars-bootstrap.version}</version>
         </dependency>
-        <!-- end of webjars -->
 
+        <!-- test containers -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jackson-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- test containers -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -248,12 +290,12 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <artifactId>testcontainers-mysql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -266,14 +308,27 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-ie-driver</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -307,7 +362,8 @@
                                 <groupId>${project.groupId}</groupId>
                                 <artifactId>${project.artifactId}</artifactId>
                                 <Implementation-Version>${project.version}</Implementation-Version>
-                                <git-SHA-1>${buildNumber}</git-SHA-1>
+                                <!--suppress UnresolvedMavenProperty. git.commit.id.abbrev is set by git git-commit-id-maven-plugin -->
+                                <git-SHA-1>${git.commit.id.abbrev}</git-SHA-1>
                                 <source-url>${project.scm.url}</source-url>
                                 <BuildDate>${maven.build.timestamp}</BuildDate>
                                 <Built-By>${user.name}</Built-By>
@@ -679,6 +735,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <!--<skipValidateSpec>true</skipValidateSpec>-->
                             <!-- TODO AND WORKAROUND: openapi bug: https://github.com/OpenAPITools/openapi-generator/issues/14648 
                             another workaround is explained in the ticket with the help of build-helper-maven-plugin where the backslashes are replaced with forward slashes.
                             -->
@@ -693,8 +750,8 @@
                             <modelNameSuffix>OpenApi</modelNameSuffix>
                             <apiNameSuffix>OpenApi</apiNameSuffix>
 
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
+                            <generatorName>spring</generatorName>
+                            <library>spring-boot</library>
 
                             <apiPackage>ch.dboeckli.restmvc.openapi.api</apiPackage>
                             <modelPackage>ch.dboeckli.restmvc.openapi.model</modelPackage>
@@ -707,7 +764,7 @@
                             <generateModelTests>false</generateModelTests>
 
                             <configOptions>
-                                <library>resttemplate</library>
+                                <library>spring-boot</library>
                                 <useJakartaEe>true</useJakartaEe>
                                 <generateClientAsBean>true</generateClientAsBean>
                                 <generateBuilders>true</generateBuilders>
@@ -720,34 +777,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openapitools</groupId>
-                        <artifactId>jackson-databind-nullable</artifactId>
-                        <version>${openapi-jackson-databind-nullable.version}</version>
-                    </dependency>
-                    <!-- 
-                    TODO:
-                    this is a workaround to overwrite the wrong jackson version from this plugin. 
-                    when it get fixed in the plugin we do not need this anymore. 
-                    workaround needed for: 7.10.0
-                    -->
-                    <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                        <version>${jackson-bom.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                        <version>${jackson-bom.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
-                        <version>${jackson-bom.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <plugin>
@@ -774,14 +803,6 @@
                         <goals>
                             <goal>build-info</goal>
                         </goals>
-                        <configuration>
-                            <additionalProperties>
-                                <mavenUser>${user.name}</mavenUser>
-                                <javaVersion>${java.version}</javaVersion>
-                                <javaVendor>${java.vendor}</javaVendor>
-                                <commit-id>${buildNumber}</commit-id>
-                            </additionalProperties>
-                        </configuration>
                     </execution>
 
                     <execution>
