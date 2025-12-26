@@ -41,7 +41,7 @@
         <docker.image.tag>development</docker.image.tag> <!-- for feature branches -->
         <docker.repo>local</docker.repo>
 
-        <spring-6-rest-mvc.version>0.0.2</spring-6-rest-mvc.version>
+        <spring-6-rest-mvc.version>0.0.3</spring-6-rest-mvc.version>
 
         <logbook.version>3.12.3</logbook.version>
         <logstash-logback.version>9.0</logstash-logback.version>
