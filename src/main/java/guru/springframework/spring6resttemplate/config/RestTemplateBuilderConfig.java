@@ -1,16 +1,14 @@
 package guru.springframework.spring6resttemplate.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateBuilderConfigurer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.autoconfigure.RestTemplateBuilderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.zalando.logbook.Logbook;
-import org.zalando.logbook.spring.LogbookClientHttpRequestInterceptor;
 
 @Configuration
 public class RestTemplateBuilderConfig {
@@ -18,16 +16,10 @@ public class RestTemplateBuilderConfig {
     @Value("${rest.template.base.url}")
     private String baseUrl;
 
-    @Value("${rest.template.user}")
-    private String user;
-
-    @Value("${rest.template.password}")
-    private String password;
-    
     @Bean
     @Primary
     OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager(ClientRegistrationRepository clientRegistrationRepository,
-                                                               OAuth2AuthorizedClientService oAuth2AuthorizedClientService ){
+                                                                OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
         OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
             .clientCredentials()
             .build();
@@ -40,12 +32,8 @@ public class RestTemplateBuilderConfig {
     @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer,
                                             OAuthClientInterceptor interceptor) {
-
-        LogbookClientHttpRequestInterceptor logbookInterceptor = new LogbookClientHttpRequestInterceptor(Logbook.builder().build());
-        
         return configurer.configure(new RestTemplateBuilder())
-            //.basicAuthentication(user, password))
-            .additionalInterceptors(interceptor, logbookInterceptor)
+            .additionalInterceptors(interceptor)
             .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
     }
 }

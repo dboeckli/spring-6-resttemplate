@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,9 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 class BeerClientImplWithTestContainerIT {
 
-    private static final String MYSQL_VERSION = "8.4.5";
-    private static final String AUTH_SERVER_VERSION = "0.0.4-SNAPSHOT";
-    private static final String REST_MVC_VERSION = "0.0.1";
+    private static final String MYSQL_VERSION = "8.4.7";
+    private static final String AUTH_SERVER_VERSION = "0.0.5-SNAPSHOT";
+    private static final String REST_MVC_VERSION = "0.0.4-SNAPSHOT";
+    private static final String KAFKA_VERSION = "4.1.1";
 
     private static final String IMAGE_REPOSITORY = "domboeckli";
 
@@ -39,6 +42,22 @@ class BeerClientImplWithTestContainerIT {
     static final int AUTH_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
 
     static final Network sharedNetwork = Network.newNetwork();
+
+    @Container
+    static GenericContainer<?> kafkaContainer= new GenericContainer<>("apache/kafka:" + KAFKA_VERSION)
+            .withNetworkAliases("kafka")
+            .withNetwork(sharedNetwork)
+            .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
+            .withEnv("KAFKA_NODE_ID", "1")
+            .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@kafka:19093")
+            .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:19093")
+            .withEnv("KAFKA_ADVERTISED_LISTENERS", "PLAINTEXT://localhost:9092")
+            .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
+            .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT")
+            .withEnv("KAFKA_LOG_DIRS", "/var/lib/kafka/data")
+            .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
+            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("kafka")))
+            .waitingFor(Wait.forSuccessfulCommand("/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"));
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:" + MYSQL_VERSION)
@@ -74,12 +93,17 @@ class BeerClientImplWithTestContainerIT {
     static GenericContainer<?> restMvc = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-rest-mvc:" + REST_MVC_VERSION)
             .withExposedPorts(REST_MVC_PORT)
             .withNetwork(sharedNetwork)
-            .withEnv("SPRING_PROFILES_ACTIVE", "localmysql")
+            .withEnv("SPRING_PROFILES_ACTIVE", "mysql")
             .withEnv("SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI", "http://auth-server:" + AUTH_SERVER_PORT)
             .withEnv("SERVER_PORT", String.valueOf(REST_MVC_PORT))
             .withEnv("SPRING_DATASOURCE_URL", "jdbc:mysql://mysql:3306/restdb")
             .withEnv("LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS_NETWORKCLIENT", "ERROR")
-            .dependsOn(mysql, authServer)
+
+            .withEnv("SPRING_KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+            .withEnv("SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS", "kafka:9092")
+            .withEnv("SPRING_KAFKA_ADMIN_PROPERTIES_BOOTSTRAP_SERVERS", "kafka:9092")
+
+            .dependsOn(mysql, kafkaContainer, authServer)
             .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("rest-mvc")))
             .waitingFor(Wait.forHttp("/actuator/health/readiness")
                     .forStatusCode(200)
@@ -125,7 +149,7 @@ class BeerClientImplWithTestContainerIT {
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
-        assertEquals(2413, page.getTotalElements());
+        assertEquals(503, page.getTotalElements());
     }
 
     @Test
@@ -143,7 +167,7 @@ class BeerClientImplWithTestContainerIT {
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
-        assertEquals(336, page.getTotalElements());
+        assertEquals(60, page.getTotalElements());
     }
 
 }

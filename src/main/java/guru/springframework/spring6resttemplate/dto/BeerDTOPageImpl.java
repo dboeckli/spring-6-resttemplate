@@ -8,23 +8,29 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value = "pageable")
-public class BeerDTOPageImpl<BeerDTO> extends PageImpl<guru.springframework.spring6resttemplate.dto.BeerDTO> {
+public class BeerDTOPageImpl<T> extends PageImpl<T> {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public BeerDTOPageImpl(@JsonProperty("content") List<guru.springframework.spring6resttemplate.dto.BeerDTO> content,
-                           @JsonProperty("number") int page,
-                           @JsonProperty("size") int size,
-                           @JsonProperty("totalElements") long total) {
-        super(content, PageRequest.of(page, size), total);
+    public BeerDTOPageImpl(@JsonProperty("content") List<T> content,
+                           @JsonProperty("page") PageMeta page) {
+        super(
+            content,
+            PageRequest.of(
+                Objects.requireNonNull(page.number(), "page.number must not be null"),
+                Objects.requireNonNull(page.size(), "page.size must not be null")
+            ),
+            Objects.requireNonNull(page.totalElements(), "page.totalElements must not be null")
+        );
     }
 
-    public BeerDTOPageImpl(List<guru.springframework.spring6resttemplate.dto.BeerDTO> content, Pageable pageable, long total) {
+    public BeerDTOPageImpl(List<T> content, Pageable pageable, long total) {
         super(content, pageable, total);
     }
 
-    public BeerDTOPageImpl(List<guru.springframework.spring6resttemplate.dto.BeerDTO> content) {
+    public BeerDTOPageImpl(List<T> content) {
         super(content);
     }
 }

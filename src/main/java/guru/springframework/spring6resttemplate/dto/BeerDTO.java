@@ -1,17 +1,20 @@
 package guru.springframework.spring6resttemplate.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Created by jt, Spring Framework Guru.
- */
+@Jacksonized
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BeerDTO {
     private UUID id;
     private Integer version;

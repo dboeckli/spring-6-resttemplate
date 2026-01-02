@@ -89,7 +89,7 @@ class BeerListPageIT {
 
         // Check the last button
         WebElement lastButton = webDriver.findElement(By.id("lastButton"));
-        assertEquals("97", lastButton.getText(), "The last button should display 97");
+        assertEquals("21", lastButton.getText(), "The last button should display 21");
 
         // Check if 'Next' is clickable
         WebElement nextButton = webDriver.findElement(By.id("nextButton"));
