@@ -18,11 +18,12 @@ public class BeerDTOPageImpl<T> extends PageImpl<T> {
                            @JsonProperty("page") PageMeta page) {
         super(
             content,
-            PageRequest.of(
-                Objects.requireNonNull(page.number(), "page.number must not be null"),
-                Objects.requireNonNull(page.size(), "page.size must not be null")
-            ),
-            Objects.requireNonNull(page.totalElements(), "page.totalElements must not be null")
+            page != null && page.number() != null && page.size() != null
+                ? PageRequest.of(page.number(), page.size())
+                : PageRequest.of(0, 1),
+            page != null && page.totalElements() != null
+                ? page.totalElements()
+                : 1
         );
     }
 

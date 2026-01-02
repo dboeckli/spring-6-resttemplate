@@ -51,8 +51,7 @@
         <merge-yaml-plugin.version>1.4</merge-yaml-plugin.version>
 
         <webjars-bootstrap.version>5.3.8</webjars-bootstrap.version>
-        <webjars-locator.version>0.52</webjars-locator.version>
-        <!-- 
+        <!--
         this is only for local development, when opening the html file in the browser.
         therefore we exclude those file being packaged into the spring boot jar. 
          -->
@@ -162,7 +161,6 @@
     </dependencyManagement>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -234,8 +232,7 @@
         <!-- webjars -->
         <dependency>
             <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>${webjars-locator.version}</version>
+            <artifactId>webjars-locator-lite</artifactId>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
