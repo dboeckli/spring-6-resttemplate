@@ -1,24 +1,25 @@
 package guru.springframework.spring6resttemplate.client;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.spring6resttemplate.config.ConfigurationValues;
 import guru.springframework.spring6resttemplate.config.OAuthClientInterceptor;
 import guru.springframework.spring6resttemplate.config.RestTemplateBuilderConfig;
 import guru.springframework.spring6resttemplate.dto.BeerDTO;
 import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
+import guru.springframework.spring6resttemplate.dto.PageMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.test.MockServerRestTemplateCustomizer;
+import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.MockServerRestTemplateCustomizer;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -40,13 +41,17 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,7 +76,7 @@ class BeerClientImplMockedTest {
     RestTemplateBuilder restTemplateBuilderConfigured;
 
     @Mock
-    RestTemplateBuilder mockRestTemplateBuilder = new RestTemplateBuilder(new MockServerRestTemplateCustomizer());
+    RestTemplateBuilder mockRestTemplateBuilder;
     
     @Autowired
     ObjectMapper objectMapper;
@@ -116,7 +121,9 @@ class BeerClientImplMockedTest {
     }
 
     @BeforeEach
-    public void setUp() throws JsonProcessingException {
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId(configurationValues.getSpringAuthProviderId());
         OAuth2AccessToken auth2AccessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, GIVEN_TOKEN_VALUE, Instant.MIN, Instant.MAX);
         
@@ -124,6 +131,7 @@ class BeerClientImplMockedTest {
         
         RestTemplate restTemplate = restTemplateBuilderConfigured.build();
         mockServer = MockRestServiceServer.bindTo(restTemplate).build();
+
         when(mockRestTemplateBuilder.build()).thenReturn(restTemplate);
         beerClient = new BeerClientImpl(mockRestTemplateBuilder);
 
@@ -132,23 +140,28 @@ class BeerClientImplMockedTest {
     }
 
     @Test
-    void testListBeers() throws JsonProcessingException {
-        String givenPayload = objectMapper.writeValueAsString(getPage());
+    void testListBeers() {
+        String givenPayload = objectMapper.writeValueAsString(getPagePayload());
 
         mockServer.expect(method(HttpMethod.GET))
             //.andExpect(header("Authorization", "Basic bWFzdGVyOnBhc3N3b3Jk"))
             .andExpect(header("Authorization", "Bearer " + GIVEN_TOKEN_VALUE))
-            .andExpect(requestTo(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH))
+            .andExpect(requestTo(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH + "?pageNumber=1&pageSize=25"))
             .andRespond(withSuccess(givenPayload, MediaType.APPLICATION_JSON));
         
         BeerDTOPageImpl<BeerDTO> beerPage = (BeerDTOPageImpl<BeerDTO>)beerClient.listBeers(null, 
-            null, 
-            null, 
             null,
-            null);
+            null,
+            1,
+            25);
+
+        log.info("BeerPage: {}", beerPage);
+
+        beerPage.getContent().iterator().forEachRemaining(beerDTO -> { log.info("### BeerDTO: {}", beerDTO); });
 
         assertAll(() -> {
             assertNotNull(beerPage);
+
             assertEquals(26, beerPage.getTotalElements());
             assertEquals(1, beerPage.getNumberOfElements());
             assertEquals(2, beerPage.getTotalPages());
@@ -158,10 +171,10 @@ class BeerClientImplMockedTest {
     }
 
     @Test
-    void testListBeersWithQueryParam() throws JsonProcessingException {
+    void testListBeersWithQueryParam() {
         String response = objectMapper.writeValueAsString(getPage());
 
-        URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH)
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl + BeerClientImpl.GET_LIST_BEER_PATH)
             .queryParam("beerName", "ALE")
             .build().toUri();
 
@@ -266,8 +279,17 @@ class BeerClientImplMockedTest {
             .upc("123245")
             .build();
     }
-    
+
+    private PagePayload<BeerDTO> getPagePayload() {
+        return new PagePayload<>(
+            singletonList(getBeerDto()),
+            new PageMeta(25, 1, 1L, 1)
+        );
+    }
+
+    private record PagePayload<T>(List<T> content, PageMeta page) {}
+
     private BeerDTOPageImpl getPage() {
-        return new BeerDTOPageImpl(Arrays.asList(getBeerDto()), 1, 25, 1);
+        return new BeerDTOPageImpl(singletonList(getBeerDto()), new PageMeta(1, 25, 1L, 1));
     }
 }

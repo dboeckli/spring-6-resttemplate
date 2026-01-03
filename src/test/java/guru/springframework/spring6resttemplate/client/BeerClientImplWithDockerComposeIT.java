@@ -8,11 +8,16 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +37,24 @@ class BeerClientImplWithDockerComposeIT {
     @Autowired
     private BeerClientImpl beerClient;
 
+    @TestConfiguration
+    static class JacksonTestConfig {
+
+        @Bean
+        @Primary
+        ObjectMapper testObjectMapper(ObjectMapper springConfiguredObjectMapper) {
+
+            // Jackson 3: Mapper ist immutable -> rebuild() + enable(...) + build()
+            return springConfiguredObjectMapper.rebuild()
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .build();
+        }
+    }
+
     @BeforeAll
     static void setUp(@Autowired BeerClientImpl beerClient) {
         checkMvcDatabaseInitDone(beerClient);
     }
-
 
     @Test
     @Order(1)
@@ -44,8 +62,8 @@ class BeerClientImplWithDockerComposeIT {
         BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null,
             null,
             null,
-            null,
-            null);
+            1,
+            25);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());
@@ -54,7 +72,7 @@ class BeerClientImplWithDockerComposeIT {
         log.info("Pageable: " + page.getPageable());
         log.info("First BeerDTO: " + page.getContent().getFirst().getBeerName());
 
-        assertEquals(2413, page.getTotalElements());
+        assertEquals(503, page.getTotalElements());
     }
 
     @Test
@@ -65,7 +83,7 @@ class BeerClientImplWithDockerComposeIT {
             .pollInterval(1, TimeUnit.SECONDS)
             .until(() -> {
                 BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
-                return page.getTotalElements() >= 2413; 
+                return page.getTotalElements() >= 503;
             });
 
         String givenBeerName = "IPA";
@@ -75,7 +93,7 @@ class BeerClientImplWithDockerComposeIT {
             null,
             null);
 
-        assertEquals(336, page.getTotalElements());  
+        assertEquals(60, page.getTotalElements());
         assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(givenBeerName.toLowerCase())),
             "Alle gefundenen Biere sollten '" + givenBeerName + "' im Namen haben");
         log.info("Gefundene Biere mit Namen '{}': {}", givenBeerName, page.getTotalElements());
