@@ -12,9 +12,6 @@ spring:
         
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: "http://auth-server:9000"
       client:
         registration:
           springauth:
@@ -109,5 +106,3 @@ rest:
       # missing routes for actuator
       # gateway url
       #url: http://localhost:8080/api/v1
-    user: "master"
-    password: "password"

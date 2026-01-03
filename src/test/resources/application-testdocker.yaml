@@ -15,9 +15,6 @@ spring:
       
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: "http://auth-server:9000"
       client:
         registration:
           springauth:
@@ -112,5 +109,3 @@ rest:
       #url: "http://localhost:8081"
       # gateway url
       url: http://localhost:8080
-    user: "master"
-    password: "password"
