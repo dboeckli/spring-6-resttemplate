@@ -5,8 +5,10 @@ import guru.springframework.spring6resttemplate.dto.BeerDTOPageImpl;
 import guru.springframework.spring6resttemplate.dto.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -41,20 +43,12 @@ public class BeerClientImpl implements BeerClient {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
         UriComponentsBuilder uriComponentsBuilder = getQueryForListBeer(beerName, beerStyle, showInventory, pageNumber, pageSize);
-
-        //ResponseEntity<String> stringResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), String.class);
-        //log.debug("String Response was: " + stringResponseEntity.getBody());
-
-        //ResponseEntity<Map> mapResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), Map.class);
-        //log.debug("Map Response was: " + mapResponseEntity.getBody());
-
-        //ResponseEntity<JsonNode> jsonResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), JsonNode.class);
-        //log.debug("Json Response was: " + jsonResponseEntity.getBody());
-        //log.debug("Json Response content was: " + jsonResponseEntity.getBody().findPath("content"));
-        //jsonResponseEntity.getBody().findPath("content")
-        //    .elements().forEachRemaining(jsonNode -> log.debug("Get Beername: " + jsonNode.get("beerName").asText()));
-
-        ResponseEntity<BeerDTOPageImpl> pageResponseEntity = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), BeerDTOPageImpl.class);
+        ResponseEntity<BeerDTOPageImpl<BeerDTO>> pageResponseEntity = restTemplate.exchange(
+            uriComponentsBuilder.toUriString(),
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<BeerDTOPageImpl<BeerDTO>>() {}
+        );
         return pageResponseEntity.getBody();
     }
 

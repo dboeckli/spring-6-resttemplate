@@ -57,6 +57,10 @@ mysql:
 
   serviceFQDN:
 
+kafka:
+  port: 9092
+  serviceFQDN:
+
 authServer:
   port: 9000
   targetPort: 9000
@@ -88,6 +92,9 @@ spring-6-rest-mvc:
   mysql:
     enabled: false
     serviceFQDN: "spring-6-resttemplate-spring-6-rest-mvc-mysql.spring-6-resttemplate.svc.cluster.local"
+  kafka:
+    enabled: false
+    serviceFQDN: "spring-6-resttemplate-spring-6-rest-mvc-kafka.spring-6-resttemplate.svc.cluster.local"
   spring:
     oauth2ResourceServer:
       issuerUri: "http://spring-6-resttemplate-spring-6-auth-server.spring-6-resttemplate.svc.cluster.local:9000"
