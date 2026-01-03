@@ -4,3 +4,6 @@ $file = Get-ChildItem -Filter spring-6-resttemplate-v*.tgz | Select-Object -Firs
 $APPLICATION_NAME = Get-ChildItem -Directory | Where-Object { $_.LastWriteTime -ge $file.LastWriteTime } | Select-Object -ExpandProperty Name
 
 helm uninstall $APPLICATION_NAME --namespace spring-6-resttemplate
+
+kubectl delete pod -n spring-6-resttemplate --field-selector=status.phase==Succeeded
+kubectl delete pod -n spring-6-resttemplate --field-selector=status.phase==Failed
