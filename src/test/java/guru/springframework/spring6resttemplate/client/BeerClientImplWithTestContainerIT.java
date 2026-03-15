@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -44,73 +42,79 @@ class BeerClientImplWithTestContainerIT {
     static final Network sharedNetwork = Network.newNetwork();
 
     @Container
-    static GenericContainer<?> kafkaContainer= new GenericContainer<>("apache/kafka:" + KAFKA_VERSION)
-            .withNetworkAliases("kafka")
-            .withNetwork(sharedNetwork)
-            .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
-            .withEnv("KAFKA_NODE_ID", "1")
-            .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@kafka:19093")
-            .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:19093")
-            .withEnv("KAFKA_ADVERTISED_LISTENERS", "PLAINTEXT://localhost:9092")
-            .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
-            .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT")
-            .withEnv("KAFKA_LOG_DIRS", "/var/lib/kafka/data")
-            .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
-            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("kafka")))
-            .waitingFor(Wait.forSuccessfulCommand("/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"));
+    static GenericContainer<?> kafkaContainer = new GenericContainer<>("apache/kafka:" + KAFKA_VERSION)
+        .withNetworkAliases("kafka")
+        .withNetwork(sharedNetwork)
+        .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
+        .withEnv("KAFKA_NODE_ID", "1")
+        .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@kafka:19093")
+        .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:19093")
+        .withEnv("KAFKA_ADVERTISED_LISTENERS", "PLAINTEXT://localhost:9092")
+        .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
+        .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT")
+        .withEnv("KAFKA_LOG_DIRS", "/var/lib/kafka/data")
+        .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
+        .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("kafka")))
+        .waitingFor(Wait.forSuccessfulCommand("/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"));
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:" + MYSQL_VERSION)
-            .withNetworkAliases("mysql")
-            .withNetwork(sharedNetwork)
-            .withEnv("MYSQL_DATABASE", "restdb")
-            .withEnv("MYSQL_USER", "restadmin")
-            .withEnv("MYSQL_PASSWORD", "password")
-            .withEnv("MYSQL_ROOT_PASSWORD", "password")
+        .withNetworkAliases("mysql")
+        .withNetwork(sharedNetwork)
+        .withEnv("MYSQL_DATABASE", "restdb")
+        .withEnv("MYSQL_USER", "restadmin")
+        .withEnv("MYSQL_PASSWORD", "password")
+        .withEnv("MYSQL_ROOT_PASSWORD", "password")
 
-            .withDatabaseName("restdb")
-            .withUsername("restadmin")
-            .withPassword("password")
-            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("mysql")))
-            .waitingFor(Wait.forSuccessfulCommand("mysqladmin ping -h localhost -uroot -ppassword"));
+        .withDatabaseName("restdb")
+        .withUsername("restadmin")
+        .withPassword("password")
+        .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("mysql")))
+        .waitingFor(Wait.forSuccessfulCommand("mysqladmin ping -h localhost -uroot -ppassword"));
 
     @Container
     static GenericContainer<?> authServer = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-auth-server:" + AUTH_SERVER_VERSION)
-            .withNetworkAliases("auth-server")
-            .withNetwork(sharedNetwork)
-            .withEnv("SERVER_PORT", String.valueOf(AUTH_SERVER_PORT))
-            .withEnv("SPRING_SECURITY_OAUTH2_AUTHORIZATION_SERVER_ISSUER", "http://auth-server:" + AUTH_SERVER_PORT)
-            .withExposedPorts(AUTH_SERVER_PORT)
-            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("auth-server")))
-            .waitingFor(Wait.forHttp("/actuator/health/readiness")
-                    .forStatusCode(200)
-                    .forResponsePredicate(response ->
-                            response.contains("\"status\":\"UP\"")
-                    )
-            );
+        .withNetworkAliases("auth-server")
+        .withNetwork(sharedNetwork)
+        .withEnv("SERVER_PORT", String.valueOf(AUTH_SERVER_PORT))
+        .withEnv("SPRING_SECURITY_OAUTH2_AUTHORIZATION_SERVER_ISSUER", "http://auth-server:" + AUTH_SERVER_PORT)
+        .withExposedPorts(AUTH_SERVER_PORT)
+        .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("auth-server")))
+        .waitingFor(Wait.forHttp("/actuator/health/readiness")
+            .forStatusCode(200)
+            .forResponsePredicate(response ->
+                response.contains("\"status\":\"UP\"")
+            )
+        );
 
     @Container
     static GenericContainer<?> restMvc = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-rest-mvc:" + REST_MVC_VERSION)
-            .withExposedPorts(REST_MVC_PORT)
-            .withNetwork(sharedNetwork)
-            .withEnv("SPRING_PROFILES_ACTIVE", "mysql")
-            .withEnv("SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI", "http://auth-server:" + AUTH_SERVER_PORT)
-            .withEnv("SERVER_PORT", String.valueOf(REST_MVC_PORT))
-            .withEnv("SPRING_DATASOURCE_URL", "jdbc:mysql://mysql:3306/restdb")
-            .withEnv("LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS_NETWORKCLIENT", "ERROR")
+        .withExposedPorts(REST_MVC_PORT)
+        .withNetwork(sharedNetwork)
+        .withEnv("SPRING_PROFILES_ACTIVE", "mysql")
+        .withEnv("SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI", "http://auth-server:" + AUTH_SERVER_PORT)
+        .withEnv("SERVER_PORT", String.valueOf(REST_MVC_PORT))
+        .withEnv("SPRING_DATASOURCE_URL", "jdbc:mysql://mysql:3306/restdb")
+        .withEnv("LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS_NETWORKCLIENT", "ERROR")
 
-            .withEnv("SPRING_KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
-            .withEnv("SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS", "kafka:9092")
-            .withEnv("SPRING_KAFKA_ADMIN_PROPERTIES_BOOTSTRAP_SERVERS", "kafka:9092")
+        .withEnv("SPRING_KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+        .withEnv("SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS", "kafka:9092")
+        .withEnv("SPRING_KAFKA_ADMIN_PROPERTIES_BOOTSTRAP_SERVERS", "kafka:9092")
 
-            .dependsOn(mysql, kafkaContainer, authServer)
-            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("rest-mvc")))
-            .waitingFor(Wait.forHttp("/actuator/health/readiness")
-                    .forStatusCode(200)
-                    .forResponsePredicate(response ->
-                            response.contains("\"status\":\"UP\"")
-                    )
-            );
+        .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
+        .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
+        .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
+        .withEnv("KAFKA_DEFAULT_REPLICATION_FACTOR", "1")
+        .withEnv("KAFKA_MIN_INSYNC_REPLICAS", "1")
+
+        .dependsOn(mysql, kafkaContainer, authServer)
+        .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("rest-mvc")))
+        .waitingFor(Wait.forHttp("/actuator/health/readiness")
+            .forStatusCode(200)
+            .forResponsePredicate(response ->
+                response.contains("\"status\":\"UP\"")
+            )
+        );
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -137,10 +141,10 @@ class BeerClientImplWithTestContainerIT {
     @Test
     void testListBeers() {
         BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null,
-                null,
-                null,
-                null,
-                null);
+            null,
+            null,
+            null,
+            null);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());
@@ -155,10 +159,10 @@ class BeerClientImplWithTestContainerIT {
     @Test
     void testListBeersWithBeerName() {
         BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA",
-                null,
-                null,
-                null,
-                null);
+            null,
+            null,
+            null,
+            null);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());
