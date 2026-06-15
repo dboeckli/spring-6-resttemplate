@@ -14,17 +14,11 @@ import java.util.Objects;
 public class BeerDTOPageImpl<T> extends PageImpl<T> {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public BeerDTOPageImpl(@JsonProperty("content") List<T> content,
-                           @JsonProperty("page") PageMeta page) {
-        super(
-            content,
-            page != null && page.number() != null && page.size() != null
-                ? PageRequest.of(page.number(), page.size())
-                : PageRequest.of(0, 1),
-            page != null && page.totalElements() != null
-                ? page.totalElements()
-                : 1
-        );
+    public BeerDTOPageImpl(@JsonProperty("content") List<T> content, @JsonProperty("page") PageMeta page) {
+        super(content,
+                page != null && page.number() != null && page.size() != null
+                        ? PageRequest.of(page.number(), page.size()) : PageRequest.of(0, 1),
+                page != null && page.totalElements() != null ? page.totalElements() : 1);
     }
 
     public BeerDTOPageImpl(List<T> content, Pageable pageable, long total) {
@@ -34,4 +28,5 @@ public class BeerDTOPageImpl<T> extends PageImpl<T> {
     public BeerDTOPageImpl(List<T> content) {
         super(content);
     }
+
 }

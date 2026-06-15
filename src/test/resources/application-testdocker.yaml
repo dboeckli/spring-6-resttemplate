@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: spring-6-resttemplate
+
+  threads:
+    virtual:
+      enabled: true
+
   docker:
     compose:
       file: compose.yaml
@@ -109,3 +114,7 @@ rest:
       #url: "http://localhost:8081"
       # gateway url
       url: http://localhost:8080
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

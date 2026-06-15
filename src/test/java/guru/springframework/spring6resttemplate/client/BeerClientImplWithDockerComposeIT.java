@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import static guru.springframework.spring6resttemplate.test.util.docker.MvcServerTestUtil.checkMvcDatabaseInitDone;
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 @ActiveProfiles("testdocker")
@@ -45,10 +44,9 @@ class BeerClientImplWithDockerComposeIT {
         ObjectMapper testObjectMapper(ObjectMapper springConfiguredObjectMapper) {
 
             // Jackson 3: Mapper ist immutable -> rebuild() + enable(...) + build()
-            return springConfiguredObjectMapper.rebuild()
-                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
-                .build();
+            return springConfiguredObjectMapper.rebuild().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build();
         }
+
     }
 
     @BeforeAll
@@ -59,11 +57,7 @@ class BeerClientImplWithDockerComposeIT {
     @Test
     @Order(1)
     void testListBeers() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null,
-            null,
-            null,
-            1,
-            25);
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, 1, 25);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());
@@ -78,24 +72,22 @@ class BeerClientImplWithDockerComposeIT {
     @Test
     @Order(8)
     void testListBeersWithBeerName() {
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .pollInterval(1, TimeUnit.SECONDS)
-            .until(() -> {
-                BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
-                return page.getTotalElements() >= 503;
-            });
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS).until(() -> {
+            BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null,
+                    null);
+            return page.getTotalElements() >= 503;
+        });
 
         String givenBeerName = "IPA";
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(givenBeerName,
-            null,
-            null,
-            null,
-            null);
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(givenBeerName, null, null, null,
+                null);
 
         assertEquals(60, page.getTotalElements());
-        assertTrue(page.getContent().stream().allMatch(beer -> beer.getBeerName().toLowerCase().contains(givenBeerName.toLowerCase())),
-            "Alle gefundenen Biere sollten '" + givenBeerName + "' im Namen haben");
+        assertTrue(
+                page.getContent()
+                    .stream()
+                    .allMatch(beer -> beer.getBeerName().toLowerCase().contains(givenBeerName.toLowerCase())),
+                "Alle gefundenen Biere sollten '" + givenBeerName + "' im Namen haben");
         log.info("Gefundene Biere mit Namen '{}': {}", givenBeerName, page.getTotalElements());
     }
 
@@ -143,12 +135,12 @@ class BeerClientImplWithDockerComposeIT {
         beerClient.deleteBeer(beerToDelete.getId());
 
         HttpClientErrorException thrown = assertThrows(HttpClientErrorException.class,
-            () -> beerClient.getBeerById(beerToDelete.getId()
-            ));
+                () -> beerClient.getBeerById(beerToDelete.getId()));
         assertEquals(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), thrown.getStatusCode());
 
         log.error("Exception Status: {} -  {}", thrown.getStatusCode(), thrown.getStatusText());
         log.error("Exception - header {} ", thrown.getResponseHeaders());
         log.error("\n Exception - message  {} ", thrown.getResponseBodyAsString());
     }
+
 }

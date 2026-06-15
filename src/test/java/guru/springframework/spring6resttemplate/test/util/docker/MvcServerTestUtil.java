@@ -19,25 +19,24 @@ public class MvcServerTestUtil {
         log.info("Check Mvc Database init done");
 
         AtomicInteger attempts = new AtomicInteger(0);
-        Awaitility.await()
-            .atMost(30, TimeUnit.SECONDS)
-            .pollInterval(1, TimeUnit.SECONDS)
-            .until(() -> {
-                int attempt = attempts.incrementAndGet();
-                try {
-                    BeerDTOPageImpl<BeerDTO> page =
-                        (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
+        Awaitility.await().atMost(30, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS).until(() -> {
+            int attempt = attempts.incrementAndGet();
+            try {
+                BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null,
+                        null);
 
-                    long found = page.getTotalElements();
-                    log.info("### Poll #{}: aktuell gefundene Biere: {}", attempt, found);
+                long found = page.getTotalElements();
+                log.info("### Poll #{}: aktuell gefundene Biere: {}", attempt, found);
 
-                    return found >= 503;
-                } catch (Exception ex) {
-                    log.error("### Poll #{}: listBeers noch nicht erfolgreich", attempt, ex);
-                    return false;
-                }
-            });
+                return found >= 503;
+            }
+            catch (Exception ex) {
+                log.error("### Poll #{}: listBeers noch nicht erfolgreich", attempt, ex);
+                return false;
+            }
+        });
 
         log.info("Database is fully initialized.");
     }
+
 }
