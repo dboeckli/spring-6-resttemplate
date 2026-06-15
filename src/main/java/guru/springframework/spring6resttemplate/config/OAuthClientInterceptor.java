@@ -22,19 +22,24 @@ import static java.util.Objects.isNull;
 
 @Component
 public class OAuthClientInterceptor implements ClientHttpRequestInterceptor {
-    
+
     private final OAuth2AuthorizedClientManager manager;
+
     private final Authentication principal;
+
     private final ClientRegistration clientRegistration;
 
-    public OAuthClientInterceptor(OAuth2AuthorizedClientManager manager, ClientRegistrationRepository clientRegistrationRepository, ConfigurationValues configurationValues) {
+    public OAuthClientInterceptor(OAuth2AuthorizedClientManager manager,
+            ClientRegistrationRepository clientRegistrationRepository, ConfigurationValues configurationValues) {
         this.manager = manager;
         this.principal = createPrincipal();
-        this.clientRegistration = clientRegistrationRepository.findByRegistrationId(configurationValues.getSpringAuthProviderId()); 
+        this.clientRegistration = clientRegistrationRepository
+            .findByRegistrationId(configurationValues.getSpringAuthProviderId());
     }
 
     @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+            throws IOException {
         OAuth2AuthorizeRequest oAuth2AuthorizeRequest = OAuth2AuthorizeRequest
             .withClientRegistrationId(clientRegistration.getRegistrationId())
             .principal(createPrincipal())
@@ -46,8 +51,7 @@ public class OAuthClientInterceptor implements ClientHttpRequestInterceptor {
             throw new IllegalStateException("Missing credentials");
         }
 
-        request.getHeaders().add(HttpHeaders.AUTHORIZATION,
-            "Bearer " + client.getAccessToken().getTokenValue());
+        request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken().getTokenValue());
 
         return execution.execute(request, body);
     }
@@ -89,5 +93,5 @@ public class OAuthClientInterceptor implements ClientHttpRequestInterceptor {
             }
         };
     }
-    
+
 }

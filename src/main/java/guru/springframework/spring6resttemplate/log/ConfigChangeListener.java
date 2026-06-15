@@ -1,7 +1,8 @@
-package guru.springframework.spring6resttemplate.config;
+package guru.springframework.spring6resttemplate.log;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -17,10 +18,12 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class ConfigChangeListener {
 
-    private static final List<String> PASSWORD_KEY_LIST = Arrays.asList("jwt.key-value", "password", "credentials", "secret", "token", "user");
+    private static final List<String> PASSWORD_KEY_LIST = Arrays.asList("jwt.key-value", "password", "credentials",
+            "secret");
 
     @EventListener
-    public void handleApplicationStarted(ApplicationStartedEvent event) {
+    @Observed(name = "config.change.listener", contextualName = "handle-context-refresh")
+    public void handleContextRefresh(ContextRefreshedEvent event) {
         final Environment env = event.getApplicationContext().getEnvironment();
         log.info("Active profiles: {}", Arrays.toString(env.getActiveProfiles()));
         final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
@@ -31,14 +34,23 @@ public class ConfigChangeListener {
             .distinct()
             .forEach(prop -> {
                 String propertyValue = env.getProperty(prop);
-                if (propertyValue == null) {
-                    log.error("### Null property found for {}: null", prop);
-                } else if (PASSWORD_KEY_LIST.stream().anyMatch(prop.toLowerCase()::contains) ||
-                    PASSWORD_KEY_LIST.stream().anyMatch(propertyValue.toLowerCase()::contains)) {
-                    log.debug("{}: {}", prop, "**************************");
-                } else {
-                    log.debug("{}: {}", prop, propertyValue);
+                if (propertyValue != null) {
+
+                    if (PASSWORD_KEY_LIST.stream().anyMatch(prop.toLowerCase()::contains)
+                            || PASSWORD_KEY_LIST.stream().anyMatch(propertyValue.toLowerCase()::contains)) {
+
+                        log.info("{}: {}", prop, "**************************"); // hide
+                                                                                // password
+                    }
+                    else {
+                        log.info("{}: {}", prop, propertyValue);
+                    }
+
+                }
+                else {
+                    log.warn("null propertyValue encountered in {}: {}", prop, propertyValue);
                 }
             });
     }
+
 }

@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class ConfigurationValues {
 
     @Value("${spring.security.oauth2.client.registration.springauth.provider}")
-    private String springAuthProviderId; 
-    
+    private String springAuthProviderId;
+
 }

@@ -1,15 +1,20 @@
 server:
-  port: 8086    
-  
+  port: 8086
+
 spring:
   application:
     name: spring-6-resttemplate
+
+  threads:
+    virtual:
+      enabled: true
+
   docker:
     compose:
       enabled: true
       stop:
         command: down
-        
+
   security:
     oauth2:
       client:
@@ -25,7 +30,7 @@ spring:
           springauth:
             authorization-uri: "http://localhost:9000/oauth2/authorize"
             token-uri: "http://localhost:9000/oauth2/token"
-            
+
 management:
   health:
     readinessstate:
@@ -106,3 +111,7 @@ rest:
       # missing routes for actuator
       # gateway url
       #url: http://localhost:8080/api/v1
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
