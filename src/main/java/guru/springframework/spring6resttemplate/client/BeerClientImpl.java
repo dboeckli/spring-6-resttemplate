@@ -25,9 +25,13 @@ public class BeerClientImpl implements BeerClient {
     private final RestTemplateBuilder restTemplateBuilder;
 
     public static final String GET_LIST_BEER_PATH = "/api/v1/beer/listBeers";
+
     public static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/getBeerById/{beerId}";
+
     public static final String POST_CREATE_BEER_PATH = "/api/v1/beer/createBeer";
+
     public static final String PUT_UPDATE_BEER_PATH = "/api/v1/beer/editBeer/{beerId}";
+
     public static final String DELETE_BEER_BY_ID_PATH = "/api/v1/beer/deleteBeer/{beerId}";
 
     public Page<BeerDTO> listBeers() {
@@ -35,20 +39,16 @@ public class BeerClientImpl implements BeerClient {
     }
 
     @Override
-    public Page<BeerDTO> listBeers(String beerName,
-                                   BeerStyle beerStyle,
-                                   Boolean showInventory,
-                                   Integer pageNumber,
-                                   Integer pageSize) {
+    public Page<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
+            Integer pageSize) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        UriComponentsBuilder uriComponentsBuilder = getQueryForListBeer(beerName, beerStyle, showInventory, pageNumber, pageSize);
+        UriComponentsBuilder uriComponentsBuilder = getQueryForListBeer(beerName, beerStyle, showInventory, pageNumber,
+                pageSize);
         ResponseEntity<BeerDTOPageImpl<BeerDTO>> pageResponseEntity = restTemplate.exchange(
-            uriComponentsBuilder.toUriString(),
-            HttpMethod.GET,
-            null,
-            new ParameterizedTypeReference<BeerDTOPageImpl<BeerDTO>>() {}
-        );
+                uriComponentsBuilder.toUriString(), HttpMethod.GET, null,
+                new ParameterizedTypeReference<BeerDTOPageImpl<BeerDTO>>() {
+                });
         return pageResponseEntity.getBody();
     }
 
@@ -61,13 +61,15 @@ public class BeerClientImpl implements BeerClient {
     @Override
     public BeerDTO createBeer(BeerDTO newBeer) {
         RestTemplate restTemplate = restTemplateBuilder.build();
-        //ResponseEntity<BeerDTO> response = restTemplate.postForEntity(POST_CREATE_BEER_PATH, newBeer, BeerDTO.class);
-        //return response.getBody();
+        // ResponseEntity<BeerDTO> response =
+        // restTemplate.postForEntity(POST_CREATE_BEER_PATH, newBeer, BeerDTO.class);
+        // return response.getBody();
 
         URI location = restTemplate.postForLocation(POST_CREATE_BEER_PATH, newBeer);
         if (location != null) {
             return restTemplate.getForObject(location.getPath(), BeerDTO.class);
-        } else {
+        }
+        else {
             throw new RuntimeException("Failed to create beer. Location header is missing.");
         }
     }
@@ -85,12 +87,9 @@ public class BeerClientImpl implements BeerClient {
         restTemplate.delete(DELETE_BEER_BY_ID_PATH, id);
     }
 
-    private UriComponentsBuilder getQueryForListBeer(String beerName,
-                                                     BeerStyle beerStyle,
-                                                     Boolean showInventory,
-                                                     Integer pageNumber,
-                                                     Integer pageSize) {
-        
+    private UriComponentsBuilder getQueryForListBeer(String beerName, BeerStyle beerStyle, Boolean showInventory,
+            Integer pageNumber, Integer pageSize) {
+
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromPath(GET_LIST_BEER_PATH);
         if (beerName != null && !beerName.isEmpty()) {
             uriComponentsBuilder.queryParam("beerName", beerName);
@@ -109,4 +108,5 @@ public class BeerClientImpl implements BeerClient {
         }
         return uriComponentsBuilder;
     }
+
 }

@@ -30,8 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BeerClientImplWithTestContainerIT {
 
     private static final String MYSQL_VERSION = "8.4.7";
+
     private static final String AUTH_SERVER_VERSION = "0.0.5-SNAPSHOT";
+
     private static final String REST_MVC_VERSION = "0.0.4-SNAPSHOT";
+
     private static final String KAFKA_VERSION = "4.1.1";
 
     private static final String IMAGE_REPOSITORY = "domboeckli";
@@ -55,11 +58,11 @@ class BeerClientImplWithTestContainerIT {
         .withEnv("KAFKA_LOG_DIRS", "/var/lib/kafka/data")
         .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
         .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("kafka")))
-        .waitingFor(Wait.forSuccessfulCommand("/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"));
+        .waitingFor(Wait.forSuccessfulCommand(
+                "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"));
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:" + MYSQL_VERSION)
-        .withNetworkAliases("mysql")
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:" + MYSQL_VERSION).withNetworkAliases("mysql")
         .withNetwork(sharedNetwork)
         .withEnv("MYSQL_DATABASE", "restdb")
         .withEnv("MYSQL_USER", "restadmin")
@@ -73,7 +76,8 @@ class BeerClientImplWithTestContainerIT {
         .waitingFor(Wait.forSuccessfulCommand("mysqladmin ping -h localhost -uroot -ppassword"));
 
     @Container
-    static GenericContainer<?> authServer = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-auth-server:" + AUTH_SERVER_VERSION)
+    static GenericContainer<?> authServer = new GenericContainer<>(
+            IMAGE_REPOSITORY + "/spring-6-auth-server:" + AUTH_SERVER_VERSION)
         .withNetworkAliases("auth-server")
         .withNetwork(sharedNetwork)
         .withEnv("SERVER_PORT", String.valueOf(AUTH_SERVER_PORT))
@@ -82,13 +86,11 @@ class BeerClientImplWithTestContainerIT {
         .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("auth-server")))
         .waitingFor(Wait.forHttp("/actuator/health/readiness")
             .forStatusCode(200)
-            .forResponsePredicate(response ->
-                response.contains("\"status\":\"UP\"")
-            )
-        );
+            .forResponsePredicate(response -> response.contains("\"status\":\"UP\"")));
 
     @Container
-    static GenericContainer<?> restMvc = new GenericContainer<>(IMAGE_REPOSITORY + "/spring-6-rest-mvc:" + REST_MVC_VERSION)
+    static GenericContainer<?> restMvc = new GenericContainer<>(
+            IMAGE_REPOSITORY + "/spring-6-rest-mvc:" + REST_MVC_VERSION)
         .withExposedPorts(REST_MVC_PORT)
         .withNetwork(sharedNetwork)
         .withEnv("SPRING_PROFILES_ACTIVE", "mysql")
@@ -111,10 +113,7 @@ class BeerClientImplWithTestContainerIT {
         .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("rest-mvc")))
         .waitingFor(Wait.forHttp("/actuator/health/readiness")
             .forStatusCode(200)
-            .forResponsePredicate(response ->
-                response.contains("\"status\":\"UP\"")
-            )
-        );
+            .forResponsePredicate(response -> response.contains("\"status\":\"UP\"")));
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -122,11 +121,14 @@ class BeerClientImplWithTestContainerIT {
         log.info("### Rest MVC Server URL: " + mvcServerUrl);
         registry.add("rest.template.base.url", () -> mvcServerUrl);
 
-        String authServerAuthorizationUrl = "http://" + authServer.getHost() + ":" + authServer.getFirstMappedPort() + "/auth2/authorize";
+        String authServerAuthorizationUrl = "http://" + authServer.getHost() + ":" + authServer.getFirstMappedPort()
+                + "/auth2/authorize";
         log.info("### AuthServer Authorization Url: " + authServerAuthorizationUrl);
-        registry.add("spring.security.oauth2.client.provider.springauth.authorization-uri", () -> authServerAuthorizationUrl);
+        registry.add("spring.security.oauth2.client.provider.springauth.authorization-uri",
+                () -> authServerAuthorizationUrl);
 
-        String authServerTokenUrl = "http://" + authServer.getHost() + ":" + authServer.getFirstMappedPort() + "/oauth2/token";
+        String authServerTokenUrl = "http://" + authServer.getHost() + ":" + authServer.getFirstMappedPort()
+                + "/oauth2/token";
         log.info("### Auth Server Token Url: " + authServerTokenUrl);
         registry.add("spring.security.oauth2.client.provider.springauth.token-uri", () -> authServerTokenUrl);
 
@@ -140,11 +142,7 @@ class BeerClientImplWithTestContainerIT {
 
     @Test
     void testListBeers() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null,
-            null,
-            null,
-            null,
-            null);
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers(null, null, null, null, null);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());
@@ -158,11 +156,7 @@ class BeerClientImplWithTestContainerIT {
 
     @Test
     void testListBeersWithBeerName() {
-        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA",
-            null,
-            null,
-            null,
-            null);
+        BeerDTOPageImpl<BeerDTO> page = (BeerDTOPageImpl<BeerDTO>) beerClient.listBeers("IPA", null, null, null, null);
 
         log.info("TotalElements: " + page.getTotalElements());
         log.info("NumberOfElements: " + page.getNumberOfElements());

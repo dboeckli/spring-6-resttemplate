@@ -18,22 +18,25 @@ public class RestTemplateBuilderConfig {
 
     @Bean
     @Primary
-    OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager(ClientRegistrationRepository clientRegistrationRepository,
-                                                                OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
+    OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
         OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
             .clientCredentials()
             .build();
 
-        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientService);
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                clientRegistrationRepository, oAuth2AuthorizedClientService);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
         return authorizedClientManager;
     }
 
     @Bean
     RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer,
-                                            OAuthClientInterceptor interceptor) {
+            OAuthClientInterceptor interceptor) {
         return configurer.configure(new RestTemplateBuilder())
             .additionalInterceptors(interceptor)
             .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl));
     }
+
 }

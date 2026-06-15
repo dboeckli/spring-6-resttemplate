@@ -1,1117 +1,1182 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.1.0</version>
+    <!-- to avoid conflicts between sortpom and release maven plugin, we add here the space before the closing slash -->
+    <relativePath />
+  </parent>
 
-    <groupId>guru.springframework</groupId>
-    <artifactId>spring-6-resttemplate</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+  <groupId>guru.springframework</groupId>
+  <artifactId>spring-6-resttemplate</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
 
-    <name>${project.artifactId}</name>
-    <description>spring-6-resttemplate</description>
+  <name>${project.artifactId}</name>
+  <description>spring-6-resttemplate</description>
 
-    <organization>
-        <name>dboeckli</name>
-    </organization>
+  <organization>
+    <name>dboeckli</name>
+  </organization>
 
-    <scm>
-        <connection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</developerConnection>
-        <url>https://github.com/${project.organization.name}/${project.artifactId}.git</url>
-        <tag>HEAD</tag>
-    </scm>
+  <scm>
+    <connection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:https://github.com/${project.organization.name}/${project.artifactId}.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/${project.organization.name}/${project.artifactId}.git</url>
+  </scm>
 
-    <properties>
-        <java.version>25</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub dboeckli Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
+    </repository>
+  </distributionManagement>
 
-        <github.acions.build>false</github.acions.build>
-        <skip.docker.publish>true</skip.docker.publish>
-        <skip.start.stop.springboot>false</skip.start.stop.springboot>
-        <skip.docker.build>false</skip.docker.build>
+  <properties>
+    <java.version>25</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <docker.image.tag>development</docker.image.tag> <!-- for feature branches -->
-        <docker.repo>local</docker.repo>
+    <github.acions.build>false</github.acions.build>
+    <skip.docker.publish>true</skip.docker.publish>
+    <skip.start.stop.springboot>false</skip.start.stop.springboot>
+    <skip.docker.build>false</skip.docker.build>
 
-        <spring-6-rest-mvc.version>0.0.3</spring-6-rest-mvc.version>
+    <docker.image.tag>development</docker.image.tag>
+    <!-- for feature branches -->
+    <docker.repo>local</docker.repo>
 
-        <logstash-logback.version>9.0</logstash-logback.version>
-        <editorconfig-maven-plugin.version>0.2.0</editorconfig-maven-plugin.version>
-        <helm.plugin.version>6.17.0</helm.plugin.version>
-        <properties-maven-plugin.version>1.3.0</properties-maven-plugin.version>
-        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
-        <merge-yaml-plugin.version>1.4</merge-yaml-plugin.version>
+    <spring-6-rest-mvc.version>0.0.3</spring-6-rest-mvc.version>
 
-        <webjars-bootstrap.version>5.3.8</webjars-bootstrap.version>
-        <!--
+    <logstash-logback.version>9.0</logstash-logback.version>
+
+    <spring-javaformat-maven-plugin.version>0.0.47</spring-javaformat-maven-plugin.version>
+    <spotless-maven-plugin.version>3.6.0</spotless-maven-plugin.version>
+
+    <helm.plugin.version>6.17.0</helm.plugin.version>
+    <properties-maven-plugin.version>1.3.0</properties-maven-plugin.version>
+    <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
+    <merge-yaml-plugin.version>1.4</merge-yaml-plugin.version>
+
+    <webjars-bootstrap.version>5.3.8</webjars-bootstrap.version>
+    <!--
         this is only for local development, when opening the html file in the browser.
         therefore we exclude those file being packaged into the spring boot jar. 
          -->
-        <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir>
+    <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir>
 
-        <!-- openapi -->
-        <openapi-jackson-databind-nullable.version>0.2.10</openapi-jackson-databind-nullable.version>
-        <openapi-generator-maven-plugin.version>7.23.0</openapi-generator-maven-plugin.version>
-        <jackson-annotations.version>2.22</jackson-annotations.version>
+    <!-- openapi -->
+    <openapi-jackson-databind-nullable.version>0.2.10</openapi-jackson-databind-nullable.version>
+    <openapi-generator-maven-plugin.version>7.23.0</openapi-generator-maven-plugin.version>
+    <jackson-annotations.version>2.22</jackson-annotations.version>
 
-        <!-- Sonar -->
-        <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.language>java</sonar.language>
-        <sonar.scm.provider>git</sonar.scm.provider>
-        <jacoco.version>0.8.15</jacoco.version>
-    </properties>
+    <!-- Sonar -->
+    <sonar-maven-plugin.version>5.7.0.6970</sonar-maven-plugin.version>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.language>java</sonar.language>
+    <sonar.scm.provider>git</sonar.scm.provider>
+    <jacoco.version>0.8.15</jacoco.version>
+  </properties>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <!-- 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+        <artifactId>spring-6-rest-mvc</artifactId>
+        <version>${spring-6-rest-mvc.version}</version>
+        <classifier>openapi</classifier>
+        <type>json</type>
+      </dependency>
+      <dependency>
+        <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+        <artifactId>spring-6-rest-mvc</artifactId>
+        <version>${spring-6-rest-mvc.version}</version>
+        <classifier>openapi</classifier>
+        <type>yaml</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-restclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-docker-compose</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-commons</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>${logstash-logback.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-micrometer-metrics</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-opentelemetry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aspectj</artifactId>
+    </dependency>
+
+    <!-- dependencies for swagger/openapi generated classes -->
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>${openapi-jackson-databind-nullable.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <!-- webjars -->
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>webjars-locator-lite</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>${webjars-bootstrap.version}</version>
+    </dependency>
+    <!-- end of webjars -->
+
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-restclient-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jackson-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-opentelemetry-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- test containers -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-mysql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- JDBC driver needed by MySQLContainer to open JDBC connections -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Selenium  -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-ie-driver</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo1.maven.org/maven2</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <!-- 
             you need a personal access token for the dboeckli organization: generate access token on github: https://github.com/settings/apps 
             add gitHub server configuration to settings.xml file with username and password (add token there)
             Configure maven settings of IntelliJ to use your personal settings.xml 
             -->
-            <id>github</id>
-            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
+    </repository>
+  </repositories>
 
-    <profiles>
-        <!-- CI/CD profile for GitHub Actions -->
-        <profile>
-            <id>ci-cd</id>
-            <activation>
-                <property>
-                    <name>env.GITHUB_ACTIONS</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <github.acions.build>true</github.acions.build>
-                <skip.docker.publish>false</skip.docker.publish>
-                <docker.repo>domboeckli</docker.repo>
-            </properties>
-        </profile>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/templates/webjars/**</exclude>
+        </excludes>
+      </resource>
+    </resources>
 
-        <profile>
-            <id>main-branch</id>
-            <activation>
-                <property>
-                    <name>env.GITHUB_REF</name>
-                    <value>refs/heads/main</value>
-                </property>
-            </activation>
-            <properties>
-                <docker.image.tag>latest</docker.image.tag>
-            </properties>
-        </profile>
-        <profile>
-            <id>master-branch</id>
-            <activation>
-                <property>
-                    <name>env.GITHUB_REF</name>
-                    <value>refs/heads/master</value>
-                </property>
-            </activation>
-            <properties>
-                <docker.image.tag>latest</docker.image.tag>
-            </properties>
-        </profile>
-    </profiles>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>lib/</classpathPrefix>
+                <!-- Force the use of '-SNAPSHOT' version naming -->
+                <useUniqueVersions>false</useUniqueVersions>
+              </manifest>
+              <manifestEntries>
+                <Implementation-Title>${project.name}</Implementation-Title>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <Implementation-Version>${project.version}</Implementation-Version>
+                <!--suppress UnresolvedMavenProperty. git.commit.id.abbrev is set by git git-commit-id-maven-plugin -->
+                <git-SHA-1>${git.commit.id.abbrev}</git-SHA-1>
+                <source-url>${project.scm.url}</source-url>
+                <BuildDate>${maven.build.timestamp}</BuildDate>
+                <Built-By>${user.name}</Built-By>
+                <Build-Jdk>${java.version}</Build-Jdk>
+                <packaging>${project.packaging}</packaging>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub dboeckli Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
-        </repository>
-    </distributionManagement>
+    <plugins>
+      <plugin>
+        <groupId>io.spring.javaformat</groupId>
+        <artifactId>spring-javaformat-maven-plugin</artifactId>
+        <version>${spring-javaformat-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+            <phase>validate</phase>
+            <inherited>true</inherited>
+          </execution>
+        </executions>
+      </plugin>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
-                <artifactId>spring-6-rest-mvc</artifactId>
-                <type>json</type>
-                <classifier>openapi</classifier>
-                <version>${spring-6-rest-mvc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
-                <artifactId>spring-6-rest-mvc</artifactId>
-                <type>yaml</type>
-                <classifier>openapi</classifier>
-                <version>${spring-6-rest-mvc.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless-maven-plugin.version}</version>
+        <configuration>
+          <pom>
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>**/node_modules/**</exclude>
+            </excludes>
+            <sortPom>
+              <!-- to avoid conflicts with release maven plugin -->
+              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+            </sortPom>
+          </pom>
+          <markdown>
+            <includes>
+              <include>**/*.md</include>
+            </includes>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>**/node_modules/**</exclude>
+            </excludes>
+            <flexmark />
+          </markdown>
+          <json>
+            <includes>
+              <include>**/*.json</include>
+            </includes>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>**/node_modules/**</exclude>
+              <exclude>.github/**</exclude>
+              <exclude>.idea/**</exclude>
+            </excludes>
+            <prettier />
+          </json>
+          <yaml>
+            <includes>
+              <include>src/main/resources/application*.yaml</include>
+              <include>src/main/resources/application*.yml</include>
+            </includes>
+            <prettier />
+          </yaml>
+          <shell>
+            <includes>
+              <include>**/*.sh</include>
+            </includes>
+            <excludes>
+              <exclude>target/**</exclude>
+              <exclude>**/node_modules/**</exclude>
+            </excludes>
+            <shfmt>
+              <version>3.13.0</version>
+            </shfmt>
+          </shell>
+        </configuration>
+        <executions>
+          <execution>
+            <id>enforce-format</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-docker-compose</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash-logback.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-micrometer-metrics</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-opentelemetry</artifactId>
-        </dependency>
-
-        <!-- dependencies for swagger/openapi generated classes -->
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>${openapi-jackson-databind-nullable.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-        <!-- webjars -->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator-lite</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${webjars-bootstrap.version}</version>
-        </dependency>
-        <!-- end of webjars -->
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jackson-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-opentelemetry-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- test containers -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-mysql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- JDBC driver needed by MySQLContainer to open JDBC connections -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Selenium  -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-ie-driver</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/templates/webjars/**</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                <addClasspath>true</addClasspath>
-                                <classpathPrefix>lib/</classpathPrefix>
-                                <!-- Force the use of '-SNAPSHOT' version naming -->
-                                <useUniqueVersions>false</useUniqueVersions>
-                            </manifest>
-                            <manifestEntries>
-                                <Implementation-Title>${project.name}</Implementation-Title>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>${project.artifactId}</artifactId>
-                                <Implementation-Version>${project.version}</Implementation-Version>
-                                <!--suppress UnresolvedMavenProperty. git.commit.id.abbrev is set by git git-commit-id-maven-plugin -->
-                                <git-SHA-1>${git.commit.id.abbrev}</git-SHA-1>
-                                <source-url>${project.scm.url}</source-url>
-                                <BuildDate>${maven.build.timestamp}</BuildDate>
-                                <Built-By>${user.name}</Built-By>
-                                <Build-Jdk>${java.version}</Build-Jdk>
-                                <packaging>${project.packaging}</packaging>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonar-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.ec4j.maven</groupId>
-                <artifactId>editorconfig-maven-plugin</artifactId>
-                <version>${editorconfig-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>check-with-editorconfig</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- See http://ec4j.github.io/editorconfig-maven-plugin/ for full configuration reference -->
-                    <excludes>
-                        <!-- Note that maven submodule directories and many non-source file patterns are excluded by default -->
-                        <!-- see https://github.com/ec4j/editorconfig-linters/blob/master/editorconfig-lint-api/src/main/java/org/ec4j/lint/api/Constants.java#L37 -->
-                        <!-- You can exclude further files from processing: -->
-                        <exclude>**/toolchains.xml</exclude>
-                        <exclude>**/settings.xml</exclude>
-                        <exclude>**/db/changelog/*.xml</exclude>
-                        <exclude>.run/**</exclude>
-                        <exclude>.mvn/**</exclude>
-                        <exclude>.idea/**</exclude>
-                        <exclude>**/banner.txt</exclude>
-                        <exclude>mvn</exclude>
-                        <exclude>mvn.cmd</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-java</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <message>This build requires at least Java ${java.version},
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <message>This build requires at least Java ${java.version},
                                         update your JVM, and
                                         run the build again</message>
-                                    <version>${java.version}</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                  <version>${java.version}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Spring Boot Actuator displays sbom-related information if a CycloneDX SBOM file is
+      <!-- Spring Boot Actuator displays sbom-related information if a CycloneDX SBOM file is
             present at the classpath -->
-            <plugin>
-                <groupId>org.cyclonedx</groupId>
-                <artifactId>cyclonedx-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>create-bill-of-materials</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>makeBom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-bill-of-materials</id>
+            <goals>
+              <goal>makeBom</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!--
+      <!--
             this plugin generates some git properties. We use the "git.commit.id.abbrev" variable which we append
             to the docker image id for builds in jenkins (docker.application.image.tag). See "jenkins" profile at the top.
             -->
-            <plugin>
-                <groupId>io.github.git-commit-id</groupId>
-                <artifactId>git-commit-id-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <verbose>true</verbose>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-                    <commitIdGenerationMode>full</commitIdGenerationMode>
-                    <runOnlyOnce>true</runOnlyOnce>
-                    <skipPoms>false</skipPoms>
-                </configuration>
-            </plugin>
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+        <configuration>
+          <verbose>true</verbose>
+          <generateGitPropertiesFile>true</generateGitPropertiesFile>
+          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+          <commitIdGenerationMode>full</commitIdGenerationMode>
+          <runOnlyOnce>true</runOnlyOnce>
+          <skipPoms>false</skipPoms>
+        </configuration>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-helm-version</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <propertyfile file="${project.build.directory}/helm.properties">
-                                    <entry key="helm.chart.version" value="v${project.version}" />
-                                </propertyfile>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <replaceregexp file="${project.build.directory}/helm.properties"
-                                               match="helm\.chart\.version=(v[0-9]+\.[0-9]+\.[0-9]+)_.*-SNAPSHOT"
-                                               replace="helm.chart.version=\1-${git.commit.id.abbrev}"
-                                               byline="true" />
-                                <property file="${project.build.directory}/helm.properties" />
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>test</phase>
-                        <!-- the dependencies-values.yaml has been merge into the values.yaml file. we delete it before the helm plugin is running -->
-                        <id>delete-after-merge</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <delete file="${project.build.directory}/helm-charts/dependencies-values.yaml" />
-                                <delete file="${project.build.directory}/helm-charts/dependencies-Chart.yaml" />
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-helm-version</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <target>
+                <propertyfile file="${project.build.directory}/helm.properties">
+                  <entry key="helm.chart.version" value="v${project.version}" />
+                </propertyfile>
+                <!--suppress UnresolvedMavenProperty -->
+                <replaceregexp byline="true" file="${project.build.directory}/helm.properties" match="helm\.chart\.version=(v[0-9]+\.[0-9]+\.[0-9]+)_.*-SNAPSHOT" replace="helm.chart.version=\1-${git.commit.id.abbrev}" />
+                <property file="${project.build.directory}/helm.properties" />
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <!-- the dependencies-values.yaml has been merge into the values.yaml file. we delete it before the helm plugin is running -->
+            <id>delete-after-merge</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <target>
+                <delete file="${project.build.directory}/helm-charts/dependencies-values.yaml" />
+                <delete file="${project.build.directory}/helm-charts/dependencies-Chart.yaml" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>${properties-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <id>read-helm-properties</id>
-                        <goals>
-                            <goal>read-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>${project.build.directory}/helm.properties</file>
-                            </files>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>${properties-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>read-helm-properties</id>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <files>
+                <file>${project.build.directory}/helm.properties</file>
+              </files>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
 
-                    <execution>
-                        <id>copy-and-filter-k8s-yaml-to-target</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/k8s</outputDirectory>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                            <resources>
-                                <resource>
-                                    <directory>k8s</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>copy-and-filter-k8s-yaml-to-target</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <outputDirectory>${project.build.directory}/k8s</outputDirectory>
+              <includeEmptyDirs>true</includeEmptyDirs>
+              <resources>
+                <resource>
+                  <directory>k8s</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>**/*</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
 
-                    <!--
+          <!--
                         This execution copies helm charts and puts them into the target directory 'helm-charts'. The helm charts are used to deploy the project.
                         During the build some variables are resolved by maven filtering (e.g. the project version).
                     -->
-                    <execution>
-                        <id>copy-and-filter-helm-charts-to-target</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/helm-charts</outputDirectory>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                            <resources>
-                                <resource>
-                                    <directory>helm-charts</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <filters>
-                                <filter>${project.build.directory}/helm.properties</filter>
-                            </filters>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>copy-and-filter-helm-charts-to-target</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <outputDirectory>${project.build.directory}/helm-charts</outputDirectory>
+              <includeEmptyDirs>true</includeEmptyDirs>
+              <resources>
+                <resource>
+                  <directory>helm-charts</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>**/*</include>
+                  </includes>
+                </resource>
+              </resources>
+              <filters>
+                <filter>${project.build.directory}/helm.properties</filter>
+              </filters>
+            </configuration>
+          </execution>
 
-                </executions>
-            </plugin>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>cd.connect.maven</groupId>
-                <artifactId>merge-yaml-plugin</artifactId>
-                <version>${merge-yaml-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>merge-values-yaml-files</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>mergeYaml</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>${project.build.directory}/helm-charts/values.yaml</file>
-                                <file>${project.build.directory}/helm-charts/dependencies-values.yaml</file>
-                            </files>
-                            <finalYaml>${project.build.directory}/helm-charts/values.yaml</finalYaml>
-                            <flowStyle>BLOCK</flowStyle>
-                            <varSubstitution>MUSTACHE</varSubstitution>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>merge-chart-yaml-files</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>mergeYaml</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>${project.build.directory}/helm-charts/dependencies-Chart.yaml</file>
-                                <file>${project.build.directory}/helm-charts/Chart.yaml</file>
-                            </files>
-                            <finalYaml>${project.build.directory}/helm-charts/Chart.yaml</finalYaml>
-                            <flowStyle>BLOCK</flowStyle>
-                            <varSubstitution>MUSTACHE</varSubstitution>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <indentSize>2</indentSize>
-                    <lineLength>180</lineLength>
-                </configuration>
-            </plugin>
-            
-            <!-- we need a port to be able to start the local profile -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>reserve-tomcat-port</id>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <portNames>
-                                <portName>tomcat.http.port</portName>
-                                <portName>jmx.server.port</portName>
-                            </portNames>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <groupId>cd.connect.maven</groupId>
+        <artifactId>merge-yaml-plugin</artifactId>
+        <version>${merge-yaml-plugin.version}</version>
+        <configuration>
+          <indentSize>2</indentSize>
+          <lineLength>180</lineLength>
+        </configuration>
+        <executions>
+          <execution>
+            <id>merge-values-yaml-files</id>
+            <goals>
+              <goal>mergeYaml</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <files>
+                <file>${project.build.directory}/helm-charts/values.yaml</file>
+                <file>${project.build.directory}/helm-charts/dependencies-values.yaml</file>
+              </files>
+              <finalYaml>${project.build.directory}/helm-charts/values.yaml</finalYaml>
+              <flowStyle>BLOCK</flowStyle>
+              <varSubstitution>MUSTACHE</varSubstitution>
+            </configuration>
+          </execution>
+          <execution>
+            <id>merge-chart-yaml-files</id>
+            <goals>
+              <goal>mergeYaml</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <files>
+                <file>${project.build.directory}/helm-charts/dependencies-Chart.yaml</file>
+                <file>${project.build.directory}/helm-charts/Chart.yaml</file>
+              </files>
+              <finalYaml>${project.build.directory}/helm-charts/Chart.yaml</finalYaml>
+              <flowStyle>BLOCK</flowStyle>
+              <varSubstitution>MUSTACHE</varSubstitution>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
+      <!-- we need a port to be able to start the local profile -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>reserve-tomcat-port</id>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <portNames>
+                <portName>tomcat.http.port</portName>
+                <portName>jmx.server.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>get-rest-mvc-openapi-json</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
-                                    <artifactId>spring-6-rest-mvc</artifactId>
-                                    <type>json</type>
-                                    <classifier>openapi</classifier>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
-                                    <destFileName>openapi.json</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
-                                    <artifactId>spring-6-rest-mvc</artifactId>
-                                    <type>yaml</type>
-                                    <classifier>openapi</classifier>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
-                                    <destFileName>openapi.yaml</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
 
-                </executions>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>get-rest-mvc-openapi-json</id>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                  <artifactId>spring-6-rest-mvc</artifactId>
+                  <type>json</type>
+                  <classifier>openapi</classifier>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
+                  <destFileName>openapi.json</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+                  <artifactId>spring-6-rest-mvc</artifactId>
+                  <type>yaml</type>
+                  <classifier>openapi</classifier>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/restmvc-openapi/</outputDirectory>
+                  <destFileName>openapi.yaml</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
 
-            </plugin>
+        </executions>
 
-            <!-- 
+      </plugin>
+
+      <!-- 
             See 
             https://openapi-generator.tech/docs/generators/spring/ and
             https://openapi-generator.tech/docs/generators/java/
             See: https://github.com/dboeckli/spring-6-project-template/issues/24
             -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi-generator-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-openapi-classes-for-restmvc</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <!-- TODO AND WORKAROUND: openapi bug: https://github.com/OpenAPITools/openapi-generator/issues/14648 
-                            another workaround is explained in the ticket with the help of build-helper-maven-plugin where the backslashes are replaced with forward slashes.
-                            -->
-                            <!--<inputSpec>${project.build.directory}\restmvc-openapi\openapi.json</inputSpec>-->
-                            <inputSpec>./target/restmvc-openapi/openapi.json</inputSpec>
-                            <cleanupOutput>true</cleanupOutput>
-
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}-openapi</artifactId>
-                            <artifactVersion>${project.version}</artifactVersion>
-
-                            <modelNameSuffix>OpenApi</modelNameSuffix>
-                            <apiNameSuffix>OpenApi</apiNameSuffix>
-
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-
-                            <apiPackage>ch.dboeckli.restmvc.openapi.api</apiPackage>
-                            <modelPackage>ch.dboeckli.restmvc.openapi.model</modelPackage>
-                            <invokerPackage>ch.dboeckli.restmvc.openapi.invoker</invokerPackage>
-
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <generateModelDocumentation>false</generateModelDocumentation>
-
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-
-                            <configOptions>
-                                <library>resttemplate</library>
-                                <useJakartaEe>true</useJakartaEe>
-                                <generateClientAsBean>true</generateClientAsBean>
-                                <generateBuilders>true</generateBuilders>
-                                <!-- https://openapi-generator.tech/docs/generators/java/ -->
-                                <!--
-                                <dateLibrary>legacy</dateLibrary>
-                                <openApiNullable>true</openApiNullable>
-                                -->
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openapitools</groupId>
-                        <artifactId>jackson-databind-nullable</artifactId>
-                        <version>${openapi-jackson-databind-nullable.version}</version>
-                    </dependency>
-                    <!--
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${openapi-jackson-databind-nullable.version}</version>
+          </dependency>
+          <!--
                     TODO:
                     this is a workaround to overwrite the wrong jackson version from this plugin.
                     when it get fixed in the plugin we do not need this anymore.
                     workaround needed for: 7.10.0
                     -->
-                    <dependency>
-                        <groupId>tools.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                        <version>${jackson-bom.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>tools.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                        <version>${jackson-bom.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
-                        <version>${jackson-annotations.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+          <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-bom.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson-bom.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>generate-openapi-classes-for-restmvc</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <!-- TODO AND WORKAROUND: openapi bug: https://github.com/OpenAPITools/openapi-generator/issues/14648 
+                            another workaround is explained in the ticket with the help of build-helper-maven-plugin where the backslashes are replaced with forward slashes.
+                            -->
+              <!--<inputSpec>${project.build.directory}\restmvc-openapi\openapi.json</inputSpec>-->
+              <inputSpec>./target/restmvc-openapi/openapi.json</inputSpec>
+              <cleanupOutput>true</cleanupOutput>
 
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
-                    <!-- Consider to disable that in production environment  -->
-                    <includeTools>true</includeTools>
-                    <layers>
-                        <enabled>true</enabled>
-                    </layers>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}-openapi</artifactId>
+              <artifactVersion>${project.version}</artifactVersion>
 
-                <executions>
-                    <execution>
-                        <id>add-build-infos</id>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                    </execution>
+              <modelNameSuffix>OpenApi</modelNameSuffix>
+              <apiNameSuffix>OpenApi</apiNameSuffix>
 
-                    <execution>
-                        <id>start-springboot-app</id>
-                        <goals>
-                            <goal>start</goal>
-                            <goal>stop</goal>
-                        </goals>
-                        <phase>post-integration-test</phase>
-                        <configuration>
-                            <skip>${skip.start.stop.springboot}</skip>
-                            <wait>1000</wait> <!-- 1000 milliseconds is default -->
-                            <maxAttempts>240</maxAttempts> <!-- 30 attempts is default, combined with wait it results to 30 sec. We wait 240 seconds. -->
-                            <profiles>docker</profiles>
-                            <arguments>
-                                <argument>-Xmx1024m</argument>
-                                <argument>--server.port=${tomcat.http.port}</argument>
-                                <argument>--spring.cloud.kubernetes.enabled=false</argument>
-                            </arguments>
-                            <jmxPort>${jmx.server.port}</jmxPort>
-                        </configuration>
-                    </execution>
+              <generatorName>java</generatorName>
+              <library>resttemplate</library>
 
-                    <execution>
-                        <id>build-docker-image</id>
-                        <goals>
-                            <goal>build-image-no-fork</goal>
-                        </goals>
-                        <phase>install</phase>
-                        <configuration>
-                            <skip>${skip.docker.build}</skip>
-                            <image>
-                                <name>local/${project.artifactId}:${project.version}</name>
-                                <tags>
-                                    local/${project.artifactId}:${docker.image.tag}
-                                </tags>
-                                <publish>false</publish>
-                            </image>
-                        </configuration>
-                    </execution>
+              <apiPackage>ch.dboeckli.restmvc.openapi.api</apiPackage>
+              <modelPackage>ch.dboeckli.restmvc.openapi.model</modelPackage>
+              <invokerPackage>ch.dboeckli.restmvc.openapi.invoker</invokerPackage>
 
-                    <execution>
-                        <id>publish-docker-image-to-github</id>
-                        <goals>
-                            <goal>build-image-no-fork</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                        <configuration>
-                            <skip>${skip.docker.publish}</skip>
-                            <image>
-                                <name>ghcr.io/${project.organization.name}/${project.artifactId}:${project.version}</name>
-                                <tags>
-                                    ghcr.io/${project.organization.name}/${project.artifactId}:${docker.image.tag}
-                                </tags>
-                                <publish>true</publish>
-                            </image>
-                            <docker>
-                                <publishRegistry>
-                                    <!-- GITHUB_ACTOR and GITHUB_TOKEN are set by gitHub Actions -->
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <username>${env.GITHUB_ACTOR}</username>
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <password>${env.GITHUB_TOKEN}</password>
-                                    <url>https://ghcr.io</url><!-- gitHub packages -->
-                                </publishRegistry>
-                            </docker>
-                        </configuration>
-                    </execution>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <generateModelDocumentation>false</generateModelDocumentation>
 
-                    <execution>
-                        <id>publish-docker-image-to-docker-hub</id>
-                        <goals>
-                            <goal>build-image-no-fork</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                        <configuration>
-                            <skip>${skip.docker.publish}</skip>
-                            <image>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <name>${env.DOCKER_USER}/${project.artifactId}:${project.version}</name>
-                                <tags>
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    ${env.DOCKER_USER}/${project.artifactId}:${docker.image.tag}
-                                </tags>
-                                <publish>true</publish>
-                            </image>
-                            <docker>
-                                <publishRegistry>
-                                    <!-- DOCKER_USER and DOCKER_TOKEN are set by gitHub Actions -->
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <username>${env.DOCKER_USER}</username>
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <password>${env.DOCKER_TOKEN}</password>
-                                    <url>https://index.docker.io/v1/</url>
-                                </publishRegistry>
-                            </docker>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
 
-            <plugin>
-                <groupId>io.kokuwa.maven</groupId>
-                <artifactId>helm-maven-plugin</artifactId>
-                <version>${helm.plugin.version}</version>
-                <extensions>true</extensions>
+              <configOptions>
+                <library>resttemplate</library>
+                <useJakartaEe>true</useJakartaEe>
+                <generateClientAsBean>true</generateClientAsBean>
+                <generateBuilders>true</generateBuilders>
+                <!-- https://openapi-generator.tech/docs/generators/java/ -->
+                <!--
+                                <dateLibrary>legacy</dateLibrary>
+                                <openApiNullable>true</openApiNullable>
+                                -->
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-                <configuration>
-                    <chartDirectory>${project.build.directory}/helm-charts/</chartDirectory>
-                    <!--suppress UnresolvedMavenProperty -->
-                    <chartVersion>${helm.chart.version}</chartVersion>
-                    <skipLint>true</skipLint>
-                    <useLocalHelmBinary>true</useLocalHelmBinary>
-                    <skip>false</skip>
-                    <templateOutputDir>${project.build.directory}/helm-templated</templateOutputDir>
-                </configuration>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
+          <!-- Consider to disable that in production environment  -->
+          <includeTools>true</includeTools>
+          <layers>
+            <enabled>true</enabled>
+          </layers>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
 
-                <executions>
-                    <execution>
-                        <id>execute-helm-dependencies</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>dependency-build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>execute-helm-lint</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>lint</goal> <!-- Locally render templates -->
-                        </goals>
-                        <configuration>
-                            <skipLint>false</skipLint>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>execute-helm-template</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>template</goal> <!-- Locally render templates -->
-                        </goals>
-                        <configuration>
-                            <skipTemplate>false</skipTemplate>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>execute-helm-dry-run</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>dry-run</goal> <!-- simulates an install. output goes to target/helm-templated -->
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>helm-package</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>package</goal> <!-- creates tgz file to target/helm -->
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>helm-login</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>registry-login</goal>
-                        </goals>
-                        <configuration>
-                            <uploadRepoStable>
-                                <name>stable-repo</name>
-                                <url>registry-1.docker.io</url>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <username>${env.DOCKER_USER}</username>  <!-- registry username -->
-                                <!--suppress UnresolvedMavenProperty -->
-                                <password>${env.DOCKER_TOKEN}</password> <!-- registry password or identity token -->
-                            </uploadRepoStable>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>helm-push</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                            <skipPushLogin>true</skipPushLogin>
-                            <uploadRepoStable>
-                                <name>stable-repo</name>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <url>registry-1.docker.io/${env.DOCKER_USER}</url>
-                            </uploadRepoStable>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+        <executions>
+          <execution>
+            <id>add-build-infos</id>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jacoco-create-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <formats>
-                                <format>XML</format>
-                            </formats>
-                            <outputDirectory>target/site/jacoco</outputDirectory> <!-- default -->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+          <execution>
+            <id>start-springboot-app</id>
+            <goals>
+              <goal>start</goal>
+              <goal>stop</goal>
+            </goals>
+            <phase>post-integration-test</phase>
+            <configuration>
+              <skip>${skip.start.stop.springboot}</skip>
+              <wait>1000</wait>
+              <!-- 1000 milliseconds is default -->
+              <maxAttempts>240</maxAttempts>
+              <!-- 30 attempts is default, combined with wait it results to 30 sec. We wait 240 seconds. -->
+              <profiles>docker</profiles>
+              <arguments>
+                <argument>-Xmx1024m</argument>
+                <argument>--server.port=${tomcat.http.port}</argument>
+                <argument>--spring.cloud.kubernetes.enabled=false</argument>
+              </arguments>
+              <jmxPort>${jmx.server.port}</jmxPort>
+            </configuration>
+          </execution>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
-                            <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
-                        </configuration>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+          <execution>
+            <id>build-docker-image</id>
+            <goals>
+              <goal>build-image-no-fork</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <skip>${skip.docker.build}</skip>
+              <image>
+                <name>local/${project.artifactId}:${project.version}</name>
+                <tags>local/${project.artifactId}:${docker.image.tag}</tags>
+                <publish>false</publish>
+              </image>
+            </configuration>
+          </execution>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
-                    <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                            <skip>true</skip>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>integration-tests</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*WithDockerComposeIT.java</exclude>
-                                <exclude>**/*WithTestContainerIT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>integration-tests-docker-compose</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*WithDockerComposeIT.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*WithTestContainerIT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>integration-tests-testcontainers</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*WithTestContainerIT.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*WithDockerComposeIT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>publish-docker-image-to-github</id>
+            <goals>
+              <goal>build-image-no-fork</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <skip>${skip.docker.publish}</skip>
+              <image>
+                <name>ghcr.io/${project.organization.name}/${project.artifactId}:${project.version}</name>
+                <tags>ghcr.io/${project.organization.name}/${project.artifactId}:${docker.image.tag}</tags>
+                <publish>true</publish>
+              </image>
+              <docker>
+                <publishRegistry>
+                  <!-- GITHUB_ACTOR and GITHUB_TOKEN are set by gitHub Actions -->
+                  <!--suppress UnresolvedMavenProperty -->
+                  <username>${env.GITHUB_ACTOR}</username>
+                  <!--suppress UnresolvedMavenProperty -->
+                  <password>${env.GITHUB_TOKEN}</password>
+                  <url>https://ghcr.io</url>
+                  <!-- gitHub packages -->
+                </publishRegistry>
+              </docker>
+            </configuration>
+          </execution>
 
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+          <execution>
+            <id>publish-docker-image-to-docker-hub</id>
+            <goals>
+              <goal>build-image-no-fork</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <skip>${skip.docker.publish}</skip>
+              <image>
+                <!--suppress UnresolvedMavenProperty -->
+                <name>${env.DOCKER_USER}/${project.artifactId}:${project.version}</name>
+                <tags>
+                  <!--suppress UnresolvedMavenProperty -->
+                  ${env.DOCKER_USER}/${project.artifactId}:${docker.image.tag}
+                </tags>
+                <publish>true</publish>
+              </image>
+              <docker>
+                <publishRegistry>
+                  <!-- DOCKER_USER and DOCKER_TOKEN are set by gitHub Actions -->
+                  <!--suppress UnresolvedMavenProperty -->
+                  <username>${env.DOCKER_USER}</username>
+                  <!--suppress UnresolvedMavenProperty -->
+                  <password>${env.DOCKER_TOKEN}</password>
+                  <url>https://index.docker.io/v1/</url>
+                </publishRegistry>
+              </docker>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>io.kokuwa.maven</groupId>
+        <artifactId>helm-maven-plugin</artifactId>
+        <version>${helm.plugin.version}</version>
+        <extensions>true</extensions>
+
+        <configuration>
+          <chartDirectory>${project.build.directory}/helm-charts/</chartDirectory>
+          <!--suppress UnresolvedMavenProperty -->
+          <chartVersion>${helm.chart.version}</chartVersion>
+          <skipLint>true</skipLint>
+          <useLocalHelmBinary>true</useLocalHelmBinary>
+          <skip>false</skip>
+          <templateOutputDir>${project.build.directory}/helm-templated</templateOutputDir>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>execute-helm-dependencies</id>
+            <goals>
+              <goal>dependency-build</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+          <execution>
+            <id>execute-helm-lint</id>
+            <goals>
+              <goal>lint</goal>
+              <!-- Locally render templates -->
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skipLint>false</skipLint>
+            </configuration>
+          </execution>
+          <execution>
+            <id>execute-helm-template</id>
+            <goals>
+              <goal>template</goal>
+              <!-- Locally render templates -->
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skipTemplate>false</skipTemplate>
+            </configuration>
+          </execution>
+          <execution>
+            <id>execute-helm-dry-run</id>
+            <goals>
+              <goal>dry-run</goal>
+              <!-- simulates an install. output goes to target/helm-templated -->
+            </goals>
+            <phase>install</phase>
+          </execution>
+          <execution>
+            <id>helm-package</id>
+            <goals>
+              <goal>package</goal>
+              <!-- creates tgz file to target/helm -->
+            </goals>
+            <phase>install</phase>
+          </execution>
+          <execution>
+            <id>helm-login</id>
+            <goals>
+              <goal>registry-login</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <uploadRepoStable>
+                <name>stable-repo</name>
+                <url>registry-1.docker.io</url>
+                <!--suppress UnresolvedMavenProperty -->
+                <username>${env.DOCKER_USER}</username>
+                <!-- registry username -->
+                <!--suppress UnresolvedMavenProperty -->
+                <password>${env.DOCKER_TOKEN}</password>
+                <!-- registry password or identity token -->
+              </uploadRepoStable>
+            </configuration>
+          </execution>
+          <execution>
+            <id>helm-push</id>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <skipPushLogin>true</skipPushLogin>
+              <uploadRepoStable>
+                <name>stable-repo</name>
+                <!--suppress UnresolvedMavenProperty -->
+                <url>registry-1.docker.io/${env.DOCKER_USER}</url>
+              </uploadRepoStable>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>jacoco-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <append>true</append>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jacoco-create-report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <formats>
+                <format>XML</format>
+              </formats>
+              <outputDirectory>target/site/jacoco</outputDirectory>
+              <!-- default -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
+              <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!--suppress UnresolvedMavenProperty. argline is set by jacoco -->
+          <argLine>${argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <skipTests>true</skipTests>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*WithDockerComposeIT.java</exclude>
+                <exclude>**/*WithTestContainerIT.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>integration-tests-docker-compose</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*WithDockerComposeIT.java</include>
+              </includes>
+              <excludes>
+                <exclude>**/*WithTestContainerIT.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>integration-tests-testcontainers</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*WithTestContainerIT.java</include>
+              </includes>
+              <excludes>
+                <exclude>**/*WithDockerComposeIT.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- CI/CD profile for GitHub Actions -->
+    <profile>
+      <id>ci-cd</id>
+      <activation>
+        <property>
+          <name>env.GITHUB_ACTIONS</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <github.acions.build>true</github.acions.build>
+        <skip.docker.publish>false</skip.docker.publish>
+        <docker.repo>domboeckli</docker.repo>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>main-branch</id>
+      <activation>
+        <property>
+          <name>env.GITHUB_REF</name>
+          <value>refs/heads/main</value>
+        </property>
+      </activation>
+      <properties>
+        <docker.image.tag>latest</docker.image.tag>
+      </properties>
+    </profile>
+    <profile>
+      <id>master-branch</id>
+      <activation>
+        <property>
+          <name>env.GITHUB_REF</name>
+          <value>refs/heads/master</value>
+        </property>
+      </activation>
+      <properties>
+        <docker.image.tag>latest</docker.image.tag>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
