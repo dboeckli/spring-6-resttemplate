@@ -70,7 +70,7 @@
     <webjars-source-dir>src/main/resources/templates/webjars/bootstrap</webjars-source-dir>
 
     <!-- openapi -->
-    <openapi-jackson-databind-nullable.version>0.2.10</openapi-jackson-databind-nullable.version>
+    <openapi-jackson-databind-nullable.version>0.2.11</openapi-jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.24.0</openapi-generator-maven-plugin.version>
     <jackson-annotations.version>2.22</jackson-annotations.version>
 
