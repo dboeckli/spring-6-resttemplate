@@ -31,44 +31,54 @@ All components are started automatically with the help of docker-compose.
 
 Without Gateway
 
-```plaintext
-+--------------+               +--------------------+
-| Client       |               | Authentication     |
-| (makes       |  -----------> | Server (Port 9000) |
-| request)     |  <----------- | (returns token)    |
-+--------------+               +--------------------+
-     |   ^  
-     |   |
-     v   |
- +----------------+               
- | MVC Backend    |
- | (Port 8081)    |
- | (Executes      |
- | query and      |
- | creates        |
- | response)      |
- +----------------+
+```mermaid
+graph LR
+    Client(["💻 Client"])
+
+    subgraph Auth ["OAuth2"]
+        AuthServer["Spring Auth Server\n:9000"]
+    end
+
+    subgraph WebApp ["Web Client"]
+        App["Spring RestTemplate\n:8086"]
+    end
+
+    subgraph Backends ["Backend Services"]
+        RestMvc["Spring REST MVC\n:8081"]
+    end
+
+    AuthServer -->|"issues JWT"| Client
+    Client <-->|"HTTP (Bearer JWT)"| App
+    App -->|"client credentials"| AuthServer
+    App <-->|"RestTemplate /api/v1/**"| RestMvc
+    RestMvc -->|"validates JWT"| AuthServer
 ```
 
 With Gateway
 
-```plaintext
-+---------+               +----------------+               +--------------------+
-| Client  |               | Gateway Server |               | Authentication     |
-| (makes  |  -----------> | (Port 8080)    |  -----------> | Server (Port 9000) |
-| request)|  <----------- |                |  <----------- | (returns token)    |
-+---------+               +----------------+               +--------------------+
-                                |   ^  
-                                |   |
-                                v   |
-                           +----------------+               
-                           | MVC Backend    |
-                           | (Port 8081)    |
-                           | (Executes      |
-                           | query and      |
-                           | creates        |
-                           | response)      |
-                           +----------------+
+```mermaid
+graph LR
+    Client(["💻 Client"])
+
+    subgraph Auth ["OAuth2"]
+        AuthServer["Spring Auth Server\n:9000"]
+    end
+
+    subgraph WebApp ["Web Client"]
+        App["Spring RestTemplate\n:8086"]
+    end
+
+    subgraph Backends ["Backend Services"]
+        Gateway["Spring Gateway\n:8080"]
+        RestMvc["Spring REST MVC\n:8081"]
+    end
+
+    AuthServer -->|"issues JWT"| Client
+    Client <-->|"HTTP (Bearer JWT)"| App
+    App -->|"client credentials"| AuthServer
+    App <-->|"RestTemplate /api/v1/**"| Gateway
+    Gateway -->|"routes"| RestMvc
+    RestMvc -->|"validates JWT"| AuthServer
 ```
 
 The Integration Test only covers the scenario without gateway. See project spring-6-restclient for integration test with gateway.
