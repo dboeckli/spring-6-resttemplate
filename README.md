@@ -73,6 +73,41 @@ With Gateway
 
 The Integration Test only covers the scenario without gateway. See project spring-6-restclient for integration test with gateway.
 
+## Sandbox (local dev environment)
+
+The sandbox consists of the app (Spring Boot, port 8086) plus MySQL, Kafka, an auth-server
+(port 9000) and the rest-mvc backend, provided by `compose.yaml`. The services start automatically
+via spring-boot-docker-compose when the app boots with the `docker` profile.
+
+### Start the sandbox (opencode-sandbox-kit)
+
+The sandbox is provisioned by the opencode-sandbox-kit and runs as a Docker container. It mounts this
+repo, starts opencode, and connects the IntelliJ MCP server.
+
+Allow the kit source (GitHub without cloning):
+
+```powershell
+sbx settings set kit.allowedSources --% "[\"docker.io/\",\"github.com/dboeckli/\"]"
+```
+
+Start a new sandbox:
+
+```powershell
+sbx run opencode --name spring-6-resttemplate --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" "C:\development\projects\spring-6-resttemplate"
+```
+
+Start the sandbox with Kubernetes support:
+
+```powershell
+sbx run opencode --name spring-6-resttemplate --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" "C:\development\projects\spring-6-resttemplate" "$env:USERPROFILE\.kube:ro"
+```
+
+Apply the kit to an existing sandbox (restarts the sandbox, VM state is kept):
+
+```powershell
+sbx kit add spring-6-resttemplate "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent"
+```
+
 ## Kubernetes
 
 ### Generate Config Map for mysql init script
@@ -127,7 +162,7 @@ cd target/helm/repo
 unpack
 
 ```powershell
-$file = Get-ChildItem -Filter spring-6-resttemplate-v*.tgz | Select-Object -First 1
+$file = Get-ChildItem -Filter spring-6-resttemplate-chart-*.tgz | Select-Object -First 1
 tar -xvf $file.Name
 ```
 
