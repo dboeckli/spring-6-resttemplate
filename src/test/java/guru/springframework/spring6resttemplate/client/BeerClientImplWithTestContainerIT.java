@@ -35,7 +35,7 @@ class BeerClientImplWithTestContainerIT {
 
     private static final String REST_MVC_VERSION = "0.0.4-snapshot";
 
-    private static final String KAFKA_VERSION = "4.1.1";
+    private static final String KAFKA_VERSION = "4.1.2";
 
     private static final String IMAGE_REPOSITORY = "domboeckli";
 
