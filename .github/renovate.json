@@ -17,12 +17,21 @@
         }
     },
     "enabledManagers": [
+        "maven",
         "maven-wrapper",
         "docker-compose",
         "kubernetes",
         "helm-values",
         "helmv3",
         "custom.regex"
+    ],
+    "ignorePaths": [
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/vendor/**",
+        "**/examples/**",
+        "**/__tests__/**",
+        "**/__fixtures__/**"
     ],
     "maven-wrapper": {
         "managerFilePatterns": [
@@ -52,6 +61,27 @@
         ]
     },
     "packageRules": [
+        {
+            "description": "Ignore Maven APIs/SPIs",
+            "matchDatasources": [
+                "maven"
+            ],
+            "matchPackageNames": [
+                "org.apache.maven:*"
+            ],
+            "enabled": false
+        },
+        {
+            "matchDatasources": [
+                "helm"
+            ],
+            "matchPackageNames": [
+                "spring-6-auth-server-chart"
+            ],
+            "versioning": "maven",
+            "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+(-snapshot)?$/",
+            "ignoreUnstable": false
+        },
         {
             "matchCategories": [
                 "docker"
@@ -112,6 +142,44 @@
                 "  JAVA_VERSION:[\\t ]*(?<currentValue>\\d+)"
             ],
             "autoReplaceStringTemplate": "  JAVA_VERSION: {{{newValue}}}"
+        },
+        {
+            "description": "Update spring-6-auth-server-chart version in dependencies-Chart.yaml",
+            "customType": "regex",
+            "datasourceTemplate": "helm",
+            "managerFilePatterns": [
+                "/(^|\\/)dependencies-Chart\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "- name: (?<depName>spring-6-auth-server-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
+            ],
+            "registryUrlTemplate": "https://repo.repsy.io/user08694146/helm-dboeckli"
+        },
+        {
+            "description": "Update mysql image version in Testcontainers ITs",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "depNameTemplate": "mysql",
+            "packageNameTemplate": "mysql",
+            "managerFilePatterns": [
+                "/(^|\\/)BeerClientImplWithTestContainerIT\\.java$/"
+            ],
+            "matchStrings": [
+                "private static final String MYSQL_VERSION = \"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\";"
+            ]
+        },
+        {
+            "description": "Update kafka image version in Testcontainers ITs",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "depNameTemplate": "apache/kafka",
+            "packageNameTemplate": "apache/kafka",
+            "managerFilePatterns": [
+                "/(^|\\/)BeerClientImplWithTestContainerIT\\.java$/"
+            ],
+            "matchStrings": [
+                "private static final String KAFKA_VERSION = \"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\";"
+            ]
         }
     ],
     "platformAutomerge": false,

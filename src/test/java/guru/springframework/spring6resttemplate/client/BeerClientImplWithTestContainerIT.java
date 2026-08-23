@@ -31,9 +31,9 @@ class BeerClientImplWithTestContainerIT {
 
     private static final String MYSQL_VERSION = "8.4.7";
 
-    private static final String AUTH_SERVER_VERSION = "0.0.5-SNAPSHOT";
+    private static final String AUTH_SERVER_VERSION = "0.0.11-snapshot";
 
-    private static final String REST_MVC_VERSION = "0.0.4-SNAPSHOT";
+    private static final String REST_MVC_VERSION = "0.0.4-snapshot";
 
     private static final String KAFKA_VERSION = "4.1.1";
 

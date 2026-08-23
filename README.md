@@ -31,47 +31,92 @@ All components are started automatically with the help of docker-compose.
 
 Without Gateway
 
-```plaintext
-+--------------+               +--------------------+
-| Client       |               | Authentication     |
-| (makes       |  -----------> | Server (Port 9000) |
-| request)     |  <----------- | (returns token)    |
-+--------------+               +--------------------+
-     |   ^  
-     |   |
-     v   |
- +----------------+               
- | MVC Backend    |
- | (Port 8081)    |
- | (Executes      |
- | query and      |
- | creates        |
- | response)      |
- +----------------+
+```mermaid
+graph LR
+    Client(["💻 Client"])
+
+    subgraph Auth ["OAuth2"]
+        AuthServer["Spring Auth Server\n:9000"]
+    end
+
+    subgraph WebApp ["Web Client"]
+        App["Spring RestTemplate\n:8086"]
+    end
+
+    subgraph Backends ["Backend Services"]
+        RestMvc["Spring REST MVC\n:8081"]
+    end
+
+    AuthServer -->|"issues JWT"| Client
+    Client <-->|"HTTP (Bearer JWT)"| App
+    App -->|"client credentials"| AuthServer
+    App <-->|"RestTemplate /api/v1/**"| RestMvc
+    RestMvc -->|"validates JWT"| AuthServer
 ```
 
 With Gateway
 
-```plaintext
-+---------+               +----------------+               +--------------------+
-| Client  |               | Gateway Server |               | Authentication     |
-| (makes  |  -----------> | (Port 8080)    |  -----------> | Server (Port 9000) |
-| request)|  <----------- |                |  <----------- | (returns token)    |
-+---------+               +----------------+               +--------------------+
-                                |   ^  
-                                |   |
-                                v   |
-                           +----------------+               
-                           | MVC Backend    |
-                           | (Port 8081)    |
-                           | (Executes      |
-                           | query and      |
-                           | creates        |
-                           | response)      |
-                           +----------------+
+```mermaid
+graph LR
+    Client(["💻 Client"])
+
+    subgraph Auth ["OAuth2"]
+        AuthServer["Spring Auth Server\n:9000"]
+    end
+
+    subgraph WebApp ["Web Client"]
+        App["Spring RestTemplate\n:8086"]
+    end
+
+    subgraph Backends ["Backend Services"]
+        Gateway["Spring Gateway\n:8080"]
+        RestMvc["Spring REST MVC\n:8081"]
+    end
+
+    AuthServer -->|"issues JWT"| Client
+    Client <-->|"HTTP (Bearer JWT)"| App
+    App -->|"client credentials"| AuthServer
+    App <-->|"RestTemplate /api/v1/**"| Gateway
+    Gateway -->|"routes"| RestMvc
+    RestMvc -->|"validates JWT"| AuthServer
 ```
 
 The Integration Test only covers the scenario without gateway. See project spring-6-restclient for integration test with gateway.
+
+## Sandbox (local dev environment)
+
+The sandbox consists of the app (Spring Boot, port 8086) plus MySQL, Kafka, an auth-server
+(port 9000) and the rest-mvc backend, provided by `compose.yaml`. The services start automatically
+via spring-boot-docker-compose when the app boots with the `docker` profile.
+
+### Start the sandbox (opencode-sandbox-kit)
+
+The sandbox is provisioned by the opencode-sandbox-kit and runs as a Docker container. It mounts this
+repo, starts opencode, and connects the IntelliJ MCP server.
+
+Allow the kit source (GitHub without cloning):
+
+```powershell
+sbx settings set kit.allowedSources --% "[\"docker.io/\",\"github.com/dboeckli/\"]"
+```
+
+Start a new sandbox:
+
+```powershell
+sbx run opencode --name spring-6-resttemplate --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" "C:\development\projects\spring-6-resttemplate"
+```
+
+Start the sandbox with Kubernetes support:
+
+```powershell
+sbx run opencode --name spring-6-resttemplate --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" "C:\development\projects\spring-6-resttemplate" "$env:USERPROFILE\.kube:ro"
+```
+
+Apply the kit to an existing sandbox (restarts the sandbox, VM state is kept):
+
+```powershell
+sbx kit add spring-6-resttemplate "git+https://github.com/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent"
+```
 
 ## Kubernetes
 
@@ -127,7 +172,7 @@ cd target/helm/repo
 unpack
 
 ```powershell
-$file = Get-ChildItem -Filter spring-6-resttemplate-v*.tgz | Select-Object -First 1
+$file = Get-ChildItem -Filter spring-6-resttemplate-chart-*.tgz | Select-Object -First 1
 tar -xvf $file.Name
 ```
 
