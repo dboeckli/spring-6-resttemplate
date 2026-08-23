@@ -62,6 +62,18 @@
     },
     "packageRules": [
         {
+            "description": "Resolve spring-6-rest-mvc from its GitHub Packages repo",
+            "matchDatasources": [
+                "maven"
+            ],
+            "matchPackageNames": [
+                "ch.dboeckli.springframeworkguru.spring-rest-mvc:*"
+            ],
+            "registryUrls": [
+                "https://maven.pkg.github.com/dboeckli/spring-6-rest-mvc"
+            ]
+        },
+        {
             "description": "Ignore Maven APIs/SPIs",
             "matchDatasources": [
                 "maven"
