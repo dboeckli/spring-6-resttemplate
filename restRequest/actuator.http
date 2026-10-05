@@ -1,62 +1,110 @@
 ### actuator
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/actuator
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator info
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/actuator/info
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator info for mvc
+< scripts/traceparent.js
 GET http://localhost:{{rest-mvc-port}}/actuator/info
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator info for gateway. does only run when started with docker compose
+< scripts/traceparent.js
 GET http://localhost:{{gateway-port}}/actuator/info
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator health
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/actuator/health
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### mvc actuator health
+< scripts/traceparent.js
 GET http://localhost:{{rest-mvc-port}}/actuator/health
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### gateway actuator health
+< scripts/traceparent.js
 GET http://localhost:{{gateway-port}}/actuator/health
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### auth server actuator health
+< scripts/traceparent.js
 GET http://localhost:{{auth-server-prt}}/actuator/health
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator health readiness
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/actuator/health/readiness
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator health liveness
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/actuator/health/liveness
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator metrics
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/metrics
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator env
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/env
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator env
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/configprops
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator beans
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/beans
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator caches
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/caches
 Accept: application/json
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
 
 ### actuator get loggers
+< scripts/traceparent.js
 GET localhost:{{application-port}}/actuator/loggers
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-resttemplate
