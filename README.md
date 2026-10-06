@@ -47,11 +47,37 @@ graph LR
         RestMvc["Spring REST MVC\n:8081"]
     end
 
+    subgraph Messaging ["Messaging"]
+        Kafka[("Kafka\n:9092")]
+    end
+
+    subgraph Drinks ["Drink Microservices"]
+        Cold["spring-6-cold-micro-service\n(ColdListener)"]
+        Cool["spring-6-cool-micro-service\n(CoolListener)"]
+        IceCold["spring-6-icecold-micro-service\n(IceColdListener)"]
+    end
+
+    subgraph Databases ["Databases"]
+        MySQL[("MySQL")]
+    end
+
     AuthServer -->|"issues JWT"| Client
     Client <-->|"HTTP (Bearer JWT)"| App
     App -->|"client credentials"| AuthServer
     App <-->|"RestTemplate /api/v1/**"| RestMvc
     RestMvc -->|"validates JWT"| AuthServer
+    RestMvc <--> MySQL
+    RestMvc <-->|"order.placed"| Kafka
+    RestMvc -->|"drink.request.cold\n(GOSE, WHEAT)"| Kafka
+    RestMvc -->|"drink.request.cool\n(STOUT, PORTER, ALE, IPA, PALE_ALE)"| Kafka
+    RestMvc -->|"drink.request.icecold\n(LAGER, SAISON)"| Kafka
+    Kafka -->|"drink.request.cold"| Cold
+    Kafka -->|"drink.request.cool"| Cool
+    Kafka -->|"drink.request.icecold"| IceCold
+    Cold -->|"drink.prepared"| Kafka
+    Cool -->|"drink.prepared"| Kafka
+    IceCold -->|"drink.prepared"| Kafka
+    Kafka -->|"drink.prepared"| RestMvc
 ```
 
 With Gateway
@@ -73,12 +99,38 @@ graph LR
         RestMvc["Spring REST MVC\n:8081"]
     end
 
+    subgraph Messaging ["Messaging"]
+        Kafka[("Kafka\n:9092")]
+    end
+
+    subgraph Drinks ["Drink Microservices"]
+        Cold["spring-6-cold-micro-service\n(ColdListener)"]
+        Cool["spring-6-cool-micro-service\n(CoolListener)"]
+        IceCold["spring-6-icecold-micro-service\n(IceColdListener)"]
+    end
+
+    subgraph Databases ["Databases"]
+        MySQL[("MySQL")]
+    end
+
     AuthServer -->|"issues JWT"| Client
     Client <-->|"HTTP (Bearer JWT)"| App
     App -->|"client credentials"| AuthServer
     App <-->|"RestTemplate /api/v1/**"| Gateway
     Gateway -->|"routes"| RestMvc
     RestMvc -->|"validates JWT"| AuthServer
+    RestMvc <--> MySQL
+    RestMvc <-->|"order.placed"| Kafka
+    RestMvc -->|"drink.request.cold\n(GOSE, WHEAT)"| Kafka
+    RestMvc -->|"drink.request.cool\n(STOUT, PORTER, ALE, IPA, PALE_ALE)"| Kafka
+    RestMvc -->|"drink.request.icecold\n(LAGER, SAISON)"| Kafka
+    Kafka -->|"drink.request.cold"| Cold
+    Kafka -->|"drink.request.cool"| Cool
+    Kafka -->|"drink.request.icecold"| IceCold
+    Cold -->|"drink.prepared"| Kafka
+    Cool -->|"drink.prepared"| Kafka
+    IceCold -->|"drink.prepared"| Kafka
+    Kafka -->|"drink.prepared"| RestMvc
 ```
 
 The Integration Test only covers the scenario without gateway. See project spring-6-restclient for integration test with gateway.
