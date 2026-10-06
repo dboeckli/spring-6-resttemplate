@@ -117,6 +117,20 @@
             "ignoreTests": true
         },
         {
+            "description": "spring-6-rest-mvc Helm charts on Docker Hub (snapshot.<sha> tags)",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "domboeckli/spring-6-rest-mvc-chart",
+                "domboeckli/spring-6-rest-mvc-mysql-chart",
+                "domboeckli/spring-6-rest-mvc-kafka-chart"
+            ],
+            "versioning": "maven",
+            "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+-snapshot(\\.[0-9a-f]+)?$/",
+            "ignoreUnstable": false
+        },
+        {
             "matchDatasources": [
                 "docker"
             ],
@@ -166,6 +180,18 @@
                 "- name: (?<depName>spring-6-auth-server-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
             ],
             "registryUrlTemplate": "https://repo.repsy.io/user08694146/helm-dboeckli"
+        },
+        {
+            "description": "Update spring-6-rest-mvc chart versions in dependencies-Chart.yaml (Docker Hub)",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "managerFilePatterns": [
+                "/(^|\\/)dependencies-Chart\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "- name: (?<depName>spring-6-rest-mvc(-mysql|-kafka)?-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
+            ],
+            "packageNameTemplate": "domboeckli/{{{depName}}}"
         },
         {
             "description": "Update mysql image version in Testcontainers ITs",
