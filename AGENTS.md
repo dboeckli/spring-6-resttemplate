@@ -78,12 +78,12 @@ is needed here. On a normal host (Windows/CI) this does not apply either.
 
 - Deployment is Helm-only: chart in `helm-charts/`, packaged to `target/helm/repo/`, release name =
   artifactId, namespace `spring-6-resttemplate`. Dependencies (auth-server, rest-mvc ± mysql/kafka)
-  are remote OCI subcharts (Repsy / Cloudsmith). `.run/` scripts `deploy-k8s` / `test-k8s` /
+  are remote OCI subcharts (Repsy / Docker Hub). `.run/` scripts `deploy-k8s` / `test-k8s` /
   `uninstall-k8s` wrap the Helm flow.
 - CI (`.github/workflows/`): `maven-build.yml` builds + deploys snapshots and triggers
   `deploy-and-test-cluster.yml`; `release.yml` runs `mvn release:prepare release:perform` on
   main/master only (version must be `-SNAPSHOT`); SonarCloud analysis runs in the `analyze` job.
-  Helm jobs log into Cloudsmith (`helm registry login docker.cloudsmith.io`) to pull the rest-mvc
+  Helm jobs log into Docker Hub (`helm registry login registry-1.docker.io`) to pull the rest-mvc
   subcharts.
 - Dependency updates are managed via `.github/dependabot.yml` and `.github/renovate.json`; validate
   changes with `renovate-config-validator`.
