@@ -12,7 +12,7 @@ dependencies:
     repository: "oci://repo.repsy.io/user08694146/helm-dboeckli"
     condition: authServer.enabled
   - name: spring-6-rest-mvc-kafka-chart
-    version: "0.0.4-snapshot"
+    version: "0.0.4-snapshot.0874a80"
     repository: "oci://registry-1.docker.io/domboeckli"
     condition: kafka.enabled
   - name: spring-6-rest-mvc-mysql-chart
