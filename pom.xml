@@ -73,7 +73,7 @@
     <!-- openapi -->
     <openapi-jackson-databind-nullable.version>0.2.13</openapi-jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.27.0</openapi-generator-maven-plugin.version>
-    <jackson-annotations.version>2.22</jackson-annotations.version>
+    <jackson-annotations.version>2.23</jackson-annotations.version>
 
     <!-- Sonar -->
     <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
